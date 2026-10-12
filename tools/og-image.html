@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!-- Forrás az og-image.png-hez (1200×630, linkmegosztási előnézet). Újragenerálás: lásd README. -->
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<title>og-image</title>
+<style>
+@font-face{font-family:"Archivo Black";src:url(../fonts/archivo-black-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Archivo Black";src:url(../fonts/archivo-black-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+1E00-1E9F,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Inter";font-weight:400 700;src:url(../fonts/inter-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"Inter";font-weight:400 700;src:url(../fonts/inter-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+1E00-1E9F,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"JetBrains Mono";font-weight:500 700;src:url(../fonts/jetbrains-mono-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2212}
+@font-face{font-family:"JetBrains Mono";font-weight:500 700;src:url(../fonts/jetbrains-mono-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+1E00-1E9F,U+2C60-2C7F,U+A720-A7FF}
+
+:root{
+  --ink:#101728; --ink2:#1A2440; --paper:#F2ECE1; --pink:#FF4E6A; --mustard:#FFC44D;
+  --display:"Archivo Black",sans-serif; --body:"Inter",sans-serif; --mono:"JetBrains Mono",monospace;
+}
+html,body{margin:0;width:1200px;height:630px;overflow:hidden}
+body{
+  position:relative;background:var(--ink);color:var(--paper);font-family:var(--body);
+  background-image:
+    radial-gradient(circle at 8% -20%, rgba(91,140,255,.22), transparent 55%),
+    radial-gradient(circle at 96% 10%, rgba(255,78,106,.18), transparent 50%);
+}
+.left{position:absolute;left:80px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center;width:620px}
+.eyebrow{font-family:var(--mono);font-size:21px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:#8695BE}
+h1{font-family:var(--display);font-weight:400;font-size:176px;line-height:.93;letter-spacing:-.035em;
+  text-transform:uppercase;margin:22px 0 0}
+h1 span{color:var(--pink)}
+.chips{display:flex;gap:12px;margin-top:40px}
+.chip{border:2px solid #38457A;background:#212C4E;color:#C7CFE6;border-radius:999px;
+  padding:12px 22px;font-size:23px;font-weight:600}
+.chip.on{background:var(--mustard);border-color:var(--mustard);color:#1A1405;font-weight:700}
+
+.card{position:absolute;width:330px;height:440px;border-radius:26px;background:var(--paper);color:var(--ink);overflow:hidden;
+  box-shadow:0 20px 0 -7px #0B1120, 0 28px 50px rgba(0,0,0,.5)}
+.card::after{content:"";position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,rgba(16,23,40,.045) 0 2px,transparent 2px 5px)}
+.card.back{left:812px;top:84px;transform:rotate(9deg);display:flex;align-items:center;justify-content:center}
+.dots{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dots i{width:17px;height:17px;border-radius:50%;background:rgba(16,23,40,.2);display:block}
+.card.front{left:735px;top:96px;transform:rotate(-6deg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;padding:30px}
+.card.front::before{content:"";position:absolute;inset:13px;border:4px solid #A80B2A;border-radius:17px}
+.role{font-family:var(--mono);font-size:15px;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:#A80B2A}
+.word{font-family:var(--display);font-size:50px;line-height:1;letter-spacing:-.02em;text-transform:uppercase;
+  text-align:center;color:#A80B2A}
+.cat{font-family:var(--mono);font-size:16px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#4A5578}
+.tip{font-family:var(--mono);font-size:18px;font-weight:700;padding:11px 18px;border-radius:12px;background:rgba(16,23,40,.09)}
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="eyebrow">Szavas partijáték · egy telefon</div>
+    <h1>Ki a<br><span>kém</span>?</h1>
+    <div class="chips">
+      <div class="chip on">Ingyenes</div>
+      <div class="chip">Reklám nélkül</div>
+      <div class="chip">Offline is megy</div>
+    </div>
+  </div>
+  <div class="card back"><div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+  <div class="card front">
+    <div class="role">A te szereped</div>
+    <div class="word">Te vagy<br>a kém</div>
+    <div class="cat">Téma: Filmek</div>
+    <div class="tip">Nyom: kalandfilm</div>
+  </div>
+</body>
+</html>

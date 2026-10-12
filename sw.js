@@ -1,4 +1,4 @@
-const CACHE = 'kem-v6';
+const CACHE = 'kem-v7';
 const FILES = [
   './',
   './index.html',

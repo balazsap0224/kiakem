@@ -11,6 +11,13 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Ki a kém? — szavas partijáték egy telefonnal">
 <meta property="og:description" content="Ingyenes, reklám nélkül, telepítés nélkül. 26 témakör, magyarul és angolul, offline is megy.">
+<meta property="og:url" content="https://balazsap0224.github.io/kiakem/">
+<meta property="og:locale" content="hu_HU">
+<meta property="og:image" content="https://balazsap0224.github.io/kiakem/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ki a kém? — egy játékkártya, rajta: Te vagy a kém">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
@@ -161,7 +168,7 @@ textarea{width:100%;min-height:110px;background:#212C4E;border:1px solid #38457A
 .starter{background:var(--ink2);border:1px solid #2A3560;border-radius:16px;padding:18px;text-align:center;margin-top:12px}
 .starter .who{font-family:var(--display);font-size:30px;letter-spacing:-.02em;margin-top:4px}
 .score{display:flex;gap:10px;margin-top:12px}
-.score div{flex:1;background:var(--ink2);border:1px solid #2A3560;border-radius:14px;padding:11px;text-align:center}
+.score>div{flex:1;background:var(--ink2);border:1px solid #2A3560;border-radius:14px;padding:11px;text-align:center}
 .score .n{font-family:var(--display);font-size:28px;line-height:1}
 .score .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#8695BE}
 
@@ -179,6 +186,23 @@ textarea{width:100%;min-height:110px;background:#212C4E;border:1px solid #38457A
 .reveal .imps{margin-top:12px;font-size:15px}
 .reveal .imps b{color:var(--pink)}
 .tiny{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#5D6A94;text-align:center;margin-top:16px}
+.tiny a,.fbw{color:#8695BE;text-decoration:underline;text-underline-offset:3px}
+.fbw{display:block;margin-top:12px;font-size:13px}
+.tr{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex:0 0 auto}
+.mini.help{color:#C7CFE6;padding:6px 0;text-decoration:underline;text-underline-offset:3px}
+
+.steps{list-style:none;margin:0;padding:0;counter-reset:st}
+.steps li{counter-increment:st;display:grid;grid-template-columns:28px 1fr;column-gap:12px;padding:13px 0;border-top:1px solid #26325A}
+.steps li:first-child{border-top:0;padding-top:0}
+.steps li:last-child{padding-bottom:0}
+.steps li::before{content:counter(st);grid-row:span 2;font-family:var(--display);font-size:26px;line-height:1;color:var(--pink)}
+.steps .k{font-family:var(--display);font-size:16px;line-height:1.2;text-transform:uppercase;letter-spacing:.01em}
+.steps .v{font-size:14.5px;color:#C7CFE6;margin-top:3px}
+.tips{list-style:none;margin:0;padding:0}
+.tips li{font-size:14.5px;color:#C7CFE6;padding:10px 0;border-top:1px solid #26325A}
+.tips li:first-child{border-top:0;padding-top:0}
+.tips li:last-child{padding-bottom:0}
+.tips b{color:var(--paper)}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -192,9 +216,12 @@ textarea{width:100%;min-height:110px;background:#212C4E;border:1px solid #38457A
       <div class="eyebrow" data-i="tagline"></div>
       <h1 class="logo" id="logo"></h1>
     </div>
-    <div class="lang">
-      <button data-l="hu" aria-pressed="true">HU</button>
-      <button data-l="en" aria-pressed="false">EN</button>
+    <div class="tr">
+      <div class="lang">
+        <button data-l="hu" aria-pressed="true">HU</button>
+        <button data-l="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="mini help" id="btnHelp" data-i="rulesEyebrow"></button>
     </div>
   </div>
 
@@ -252,8 +279,25 @@ textarea{width:100%;min-height:110px;background:#212C4E;border:1px solid #38457A
   </div>
 
   <div class="err" id="setupErr"></div>
-  <div class="foot"><button class="btn primary" id="btnStart"></button></div>
+  <div class="foot">
+    <button class="btn primary" id="btnStart"></button>
+    <button class="btn ghost" id="btnRules" data-i="rulesBtn"></button>
+  </div>
   <div class="tiny" data-i="passTiny"></div>
+  <div class="tiny" style="margin-top:10px"><a id="fbLink" target="_blank" rel="noopener" data-i="fbLink"></a></div>
+</section>
+
+<!-- ============ RULES ============ -->
+<section id="s-rules" class="screen">
+  <div class="eyebrow" data-i="rulesEyebrow"></div>
+  <h2 data-i="rulesH"></h2>
+  <p class="sub" data-i="rulesSub"></p>
+  <div class="block"><ol class="steps" id="rulesSteps"></ol></div>
+  <div class="block">
+    <span class="lbl" data-i="tipsLbl"></span>
+    <ul class="tips" id="rulesTips"></ul>
+  </div>
+  <div class="foot"><button class="btn paper" id="btnRulesBack" data-i="back"></button></div>
 </section>
 
 <!-- ============ DEAL ============ -->
@@ -317,6 +361,7 @@ textarea{width:100%;min-height:110px;background:#212C4E;border:1px solid #38457A
     <div class="eyebrow" data-i="secretWord"></div>
     <div class="w" id="revWord"></div>
     <div class="imps" id="revImps"></div>
+    <a class="fbw" id="fbWord" target="_blank" rel="noopener" data-i="fbWord"></a>
   </div>
   <div class="score">
     <div><div class="n" id="scoreTeam2">0</div><div class="k" data-i="team"></div></div>
@@ -335,7 +380,7 @@ textarea{width:100%;min-height:110px;background:#212C4E;border:1px solid #38457A
 /* ================= SZÓCSOMAGOK / WORD PACKS ================= */
 const PACKS = [
 {id:"food",n:{hu:"Ételek",en:"Food"},w:{
-hu:"gulyás|pizza|lángos|palacsinta|sushi|hamburger|rántott hús|túrós csusza|halászlé|kolbász|tojásrántotta|lasagne|kebab|körözött|rakott krumpli|bejgli|fagylalt|müzli|zsíros kenyér|tortilla|gombóc|paprikás krumpli|krémes|pörkölt|hot dog|sajtburger|tejbegríz|csirkeleves|gyros|túró rudi|töltött káposzta|somlói galuska|rétes|pogácsa|kürtőskalács|virsli|sült krumpli|spagetti|szendvics|nokedli|savanyú káposzta|mákos guba|croissant|popcorn|lecsó|zserbó|tükörtojás|gesztenyepüré|meggyleves",
+hu:"gulyás|pizza|lángos|palacsinta|sushi|hamburger|rántott hús|túrós csusza|halászlé|kolbász|tojásrántotta|lasagne|kebab|körözött|rakott krumpli|bejgli|fagylalt|müzli|zsíros kenyér|tortilla|gombóc|paprikás krumpli|krémes|pörkölt|hot dog|sajtburger|tejbegríz|csirkeleves|gyros|töltött káposzta|somlói galuska|rétes|pogácsa|kürtőskalács|virsli|sült krumpli|spagetti|szendvics|nokedli|savanyú káposzta|mákos guba|croissant|popcorn|lecsó|zserbó|tükörtojás|gesztenyepüré|meggyleves",
 en:"goulash|pizza|pancakes|sushi|burger|fried chicken|mac and cheese|fish and chips|hot dog|scrambled eggs|lasagna|kebab|mashed potatoes|apple pie|ice cream|granola|toast|tortilla|dumplings|french fries|cheesecake|beef stew|cheeseburger|rice pudding|chicken soup|gyros|meatballs|stuffed peppers|strudel|bagel|churros|sausage|spaghetti|sandwich|croissant|popcorn|nachos|ramen|pad thai|paella|risotto|waffles|donut|pretzel|steak|omelette|fried rice|burrito|clam chowder|banana bread"}},
 
 {id:"drink",n:{hu:"Italok",en:"Drinks"},w:{
@@ -359,12 +404,12 @@ hu:"fogorvos|pilóta|tanár|szemetes|programozó|séf|tűzoltó|könyvtáros|bí
 en:"dentist|pilot|teacher|garbage collector|programmer|chef|firefighter|librarian|judge|hairdresser|carpenter|police officer|vet|waiter|mail carrier|musician|architect|baker|pharmacist|voice actor|coach|electrician|accountant|tour guide|weather forecaster|surgeon|fisherman|soldier|magician|babysitter|taxi driver|archaeologist|farmer|journalist|cleaner|sailor|psychologist|butcher|gardener|stuntman|influencer|lawyer|receptionist|painter|optician|night guard|interpreter|plumber|set designer|lifeguard"}},
 
 {id:"movie",n:{hu:"Filmek",en:"Movies"},w:{
-hu:"Titanic|Shrek|Mátrix|Jurassic Park|Vissza a jövőbe|A Gyűrűk Ura|Csillagok háborúja|Bosszúállók|Kill Bill|Csillagok között|Harry Potter|A keresztapa|L'ecsó|Terminátor|Csupasz pisztoly|Ragyogás|Eredet|Pókember|Harcosok klubja|Trainspotting|Coco|Joker|Halálos iramban|Rambo|Karib-tenger kalózai|Az oroszlánkirály|Gru|Barbie|Oppenheimer|Toy Story|Vasember|Batman|Jégvarázs|Rocky|Cápa|E.T.|Amerikai pite|Mamma Mia|A nyolcadik utas|Sikoly|Forrest Gump|Reszkessetek, betörők|Másnaposok|Némó nyomában|Indiana Jones|Piszkos tánc|Ponyvaregény|A remény rabjai|Avatar|Különben dühbe jövünk|Gladiátor|A bárányok hallgatnak|Hetedik|Mad Max|A Zöld Mérföld|Az ördög Pradát visel|Micsoda nő!|Üvegtigris|Valami Amerika|Kontroll|A Pál utcai fiúk|A múmia|Ace Ventura|A Sötét Lovag",
-en:"Titanic|Shrek|The Matrix|Jurassic Park|Back to the Future|The Lord of the Rings|Star Wars|The Avengers|Kill Bill|Interstellar|Harry Potter|The Godfather|Ratatouille|The Terminator|The Naked Gun|The Shining|Inception|Spider-Man|Fight Club|Trainspotting|Coco|Joker|Fast and Furious|Rambo|Pirates of the Caribbean|The Lion King|Despicable Me|Barbie|Oppenheimer|Toy Story|Iron Man|Batman|Frozen|Rocky|Jaws|E.T.|American Pie|Mamma Mia|Alien|Scream|Forrest Gump|Home Alone|The Hangover|Finding Nemo|Indiana Jones|Dirty Dancing|Pulp Fiction|The Shawshank Redemption|Avatar|Mean Girls|Gladiator|The Silence of the Lambs|Se7en|Mad Max|The Green Mile|The Devil Wears Prada|Pretty Woman|The Mummy|Ace Ventura|The Dark Knight|Goodfellas|La La Land|Get Out|Groundhog Day"}},
+hu:"Titanic|Shrek|Mátrix|Jurassic Park|Vissza a jövőbe|A Gyűrűk Ura|Csillagok háborúja|Bosszúállók|Kill Bill|Csillagok között|Harry Potter|A keresztapa|L'ecsó|Terminátor|Csupasz pisztoly|Ragyogás|Eredet|Harcosok klubja|Trainspotting|Coco|Joker|Halálos iramban|Rambo|Karib-tenger kalózai|Az oroszlánkirály|Gru|Barbie|Oppenheimer|Toy Story|Jégvarázs|Rocky|Cápa|E.T.|Amerikai pite|Mamma Mia|A nyolcadik utas|Sikoly|Forrest Gump|Reszkessetek, betörők|Másnaposok|Némó nyomában|Indiana Jones|Piszkos tánc|Ponyvaregény|A remény rabjai|Avatar|Különben dühbe jövünk|Gladiátor|A bárányok hallgatnak|Hetedik|Mad Max|A Zöld Mérföld|Az ördög Pradát visel|Micsoda nő!|Üvegtigris|Valami Amerika|Kontroll|A Pál utcai fiúk|A múmia|Ace Ventura|A Sötét Lovag|Fekete Párduc|A galaxis őrzői",
+en:"Titanic|Shrek|The Matrix|Jurassic Park|Back to the Future|The Lord of the Rings|Star Wars|The Avengers|Kill Bill|Interstellar|Harry Potter|The Godfather|Ratatouille|The Terminator|The Naked Gun|The Shining|Inception|Fight Club|Trainspotting|Coco|Joker|Fast and Furious|Rambo|Pirates of the Caribbean|The Lion King|Despicable Me|Barbie|Oppenheimer|Toy Story|Frozen|Rocky|Jaws|E.T.|American Pie|Mamma Mia|Alien|Scream|Forrest Gump|Home Alone|The Hangover|Finding Nemo|Indiana Jones|Dirty Dancing|Pulp Fiction|The Shawshank Redemption|Avatar|Mean Girls|Gladiator|The Silence of the Lambs|Se7en|Mad Max|The Green Mile|The Devil Wears Prada|Pretty Woman|The Mummy|Ace Ventura|The Dark Knight|Goodfellas|La La Land|Get Out|Groundhog Day|Black Panther|Guardians of the Galaxy"}},
 
 {id:"show",n:{hu:"Sorozatok",en:"TV shows"},w:{
-hu:"Trónok harca|Jóbarátok|Breaking Bad|Stranger Things|Simpson család|Squid Game|A hivatal|Sherlock|Csernobil|Rick és Morty|Peaky Blinders|Dark|Family Guy|Narcos|Mr. Robot|Süsü|Doktor House|Wednesday|Vaják|A korona|Fekete tükör|Lost|SpongyaBob|Szex és New York|South Park|A mandalóri|A nagy pénzrablás|The Last of Us|Vészhelyzet|Agymenők|Kobra 11|Alkonyzóna|Barátok közt|Jóban Rosszban|A Mentalista|Sons of Anarchy|Better Call Saul|Bridgerton|Ted Lasso|Avatar – Aang legendája",
-en:"Game of Thrones|Friends|Breaking Bad|Stranger Things|The Simpsons|Squid Game|The Office|Sherlock|Chernobyl|Rick and Morty|Peaky Blinders|Dark|Family Guy|Narcos|Mr. Robot|House|Wednesday|The Witcher|The Crown|Black Mirror|Lost|SpongeBob|Sex and the City|South Park|The Mandalorian|Money Heist|The Last of Us|Succession|Severance|Brooklyn Nine-Nine|Better Call Saul|The Big Bang Theory|Ted Lasso|Avatar: The Last Airbender|Grey's Anatomy|Bridgerton|Sons of Anarchy|The Boys|Modern Family|Prison Break"}},
+hu:"Trónok harca|Jóbarátok|Breaking Bad|Stranger Things|Simpson család|Squid Game|A hivatal|Sherlock|Csernobil|Rick és Morty|Peaky Blinders|Dark|Family Guy|Narcos|Mr. Robot|Doktor House|Wednesday|Vaják|A korona|Fekete tükör|Lost|Szex és New York|South Park|A mandalóri|A nagy pénzrablás|The Last of Us|Vészhelyzet|Agymenők|Kobra 11|Alkonyzóna|Barátok közt|Jóban Rosszban|A Mentalista|Sons of Anarchy|Better Call Saul|Bridgerton|Ted Lasso|Avatar – Aang legendája",
+en:"Game of Thrones|Friends|Breaking Bad|Stranger Things|The Simpsons|Squid Game|The Office|Sherlock|Chernobyl|Rick and Morty|Peaky Blinders|Dark|Family Guy|Narcos|Mr. Robot|House|Wednesday|The Witcher|The Crown|Black Mirror|Lost|Sex and the City|South Park|The Mandalorian|Money Heist|The Last of Us|Succession|Severance|Brooklyn Nine-Nine|Better Call Saul|The Big Bang Theory|Ted Lasso|Avatar: The Last Airbender|Grey's Anatomy|Bridgerton|Sons of Anarchy|The Boys|Modern Family|Prison Break"}},
 
 {id:"huartist",n:{hu:"Magyar előadók",en:null},w:{
 hu:"Manuel|Beton.Hofi|Dzsúdló|Azahriah|Halott Pénz|Bagossy Brothers|Krúbi|Republic|Quimby|T. Danny|Ákos|LGT|Wellhello|Desh|Follow The Flow|Tankcsapda|Punnany Massif|Bëlga|Rúzsa Magdi|Carson Coma|Bródy János|Omega|Neoton Família|Kispál és a Borz|Margaret Island|Blahalouisiana|Ossian|Majka|Szabó Balázs Bandája|Zaporozsec|30Y|Elefánt|Lóci játszik|Fluor Tomi|Ganxsta Zolee|Illés|Hooligans|Anna and the Barbies|Csík zenekar",en:null}},
@@ -378,12 +423,12 @@ hu:"zongora|hegedű|dob|gitár|fuvola|harmonika|cselló|szájharmonika|trombita|
 en:"piano|violin|drums|guitar|flute|accordion|cello|harmonica|trumpet|xylophone|organ|bass guitar|harp|tuba|synthesizer|recorder|triangle|saxophone|drum machine|double bass|clarinet|ukulele|banjo|tambourine|gong|French horn|bagpipes|marimba|electric guitar|microphone|metronome|timpani|harpsichord|ocarina|didgeridoo|cowbell|kazoo|sitar"}},
 
 {id:"house",n:{hu:"A lakásban",en:"Around the house"},w:{
-hu:"porszívó|hűtő|tükör|matrac|mikró|fogkefe|radiátor|szemeteskuka|függöny|mosógép|kanapé|vasaló|villanykapcsoló|szőnyeg|pizsama|hajszárító|párna|fűszertartó|kulcstartó|hosszabbító|teáskanna|könyvespolc|zuhanyfej|ébresztőóra|cipőkanál|konnektor|papucs|törölköző|gyertya|szobanövény|létra|mosogatógép|fogas|takaró|dugóhúzó|serpenyő|WC-papír|falióra|kilincs|szárítókötél|hokedli|éjjeliszekrény|hőmérő|fürdőszobamérleg|reszelő|befőttesüveg|lábtörlő|szúnyogháló|sótartó|kaparós szivacs",
+hu:"porszívó|hűtő|tükör|matrac|mikró|fogkefe|radiátor|szemeteskuka|függöny|mosógép|kanapé|vasaló|villanykapcsoló|szőnyeg|pizsama|hajszárító|párna|fűszertartó|kulcstartó|hosszabbító|teáskanna|könyvespolc|zuhanyfej|ébresztőóra|cipőkanál|konnektor|törölköző|gyertya|szobanövény|létra|mosogatógép|fogas|takaró|dugóhúzó|serpenyő|WC-papír|falióra|kilincs|szárítókötél|hokedli|éjjeliszekrény|hőmérő|fürdőszobamérleg|reszelő|befőttesüveg|lábtörlő|szúnyogháló|sótartó|kaparós szivacs",
 en:"vacuum cleaner|fridge|mirror|mattress|microwave|toothbrush|radiator|trash can|curtains|washing machine|couch|iron|light switch|rug|pajamas|hair dryer|pillow|spice rack|keychain|extension cord|kettle|bookshelf|shower head|alarm clock|shoehorn|power outlet|slippers|towel|candle|houseplant|ladder|dishwasher|coat hanger|blanket|corkscrew|frying pan|toilet paper|wall clock|doorknob|clothesline|stool|nightstand|thermometer|bathroom scale|cheese grater|mason jar|doormat|window screen|salt shaker|sponge"}},
 
 {id:"school",n:{hu:"Egyetem, suli",en:"School & uni"},w:{
-hu:"vizsgaidőszak|kollégium|jegyzet|büfé|ZH|előadás|gyakvezér|szorgalmi|diákigazolvány|könyvtár|laborgyakorlat|szakdolgozat|kredit|Neptun|utóvizsga|tankör|gólyatábor|tétel|házi feladat|padtárs|tanterem|szünet|évfolyamtárs|beadandó|osztályzat|puska|tanári|osztálykirándulás|érettségi|ösztöndíj|felvételi|tornaóra|menza|ellenőrző|csengő|projektor|katalógus|szigorlat|kiselőadás|szemeszter|szóbeli|dolgozat|szertár|iskolatáska|padsor",
-en:"exam period|dorm|lecture notes|cafeteria|pop quiz|lecture|teaching assistant|student ID|library|lab session|thesis|credits|retake exam|freshman week|homework|deskmate|classroom|break|classmate|assignment|grade|cheat sheet|staff room|field trip|graduation|scholarship|admissions|PE class|school lunch|report card|school bell|projector|attendance|group project|detention|principal|locker|whiteboard|semester|final exam|oral exam|backpack|hall pass|yearbook|school bus"}},
+hu:"vizsgaidőszak|kollégium|jegyzet|büfé|ZH|előadás|gyakvezér|szorgalmi|diákigazolvány|laborgyakorlat|szakdolgozat|kredit|Neptun|utóvizsga|tankör|gólyatábor|tétel|házi feladat|padtárs|tanterem|szünet|évfolyamtárs|beadandó|osztályzat|puska|tanári|osztálykirándulás|érettségi|ösztöndíj|felvételi|tornaóra|menza|ellenőrző|csengő|projektor|katalógus|szigorlat|kiselőadás|szemeszter|szóbeli|dolgozat|szertár|iskolatáska|padsor",
+en:"exam period|dorm|lecture notes|cafeteria|pop quiz|lecture|teaching assistant|student ID|lab session|thesis|credits|retake exam|freshman week|homework|deskmate|classroom|break|classmate|assignment|grade|cheat sheet|staff room|field trip|scholarship|admissions|PE class|school lunch|report card|school bell|projector|attendance|group project|detention|principal|locker|whiteboard|semester|final exam|oral exam|backpack|hall pass|yearbook|school bus"}},
 
 {id:"body",n:{hu:"Testrészek",en:"Body parts"},w:{
 hu:"könyök|boka|fül|szemöldök|hüvelykujj|nyelv|térd|váll|borda|köröm|áll|tarkó|szempilla|sarok|csukló|orrlyuk|gerinc|tenyér|homlok|fogsor|térdkalács|vádli|szemfog|kisujj|halánték|bicepsz|köldök|torok|kulcscsont|orrcimpa|szemgolyó|nyak|comb|hónalj|állkapocs|bőr|máj|szív|tüdő|fülcimpa",
@@ -413,8 +458,8 @@ hu:"elesni a lépcsőn|rossz névvel köszönni|hangosan felnevetni temetésen|i
 en:"tripping on the stairs|calling someone the wrong name|laughing at a funeral|waving at someone who wasn't waving at you|spinach in your teeth|phone ringing in a cinema|forgetting the wifi password|liking an old post by accident|missing the note at karaoke|hugging a stranger|leaving your mic on|saying the quiet part out loud|texting the wrong group chat|coffee on a white shirt|falling asleep in a lecture|walking in without knocking|clapping too early|calling your teacher mom|sending the wrong emoji|your stomach growling loudly|both stepping the same way|blinking in every photo|forgetting someone's name|pushing a pull door|talking at the same time|accidental front camera selfie|putting back an empty coffee pot|a voice note you can't unsend|autocorrect ruining a text|replying all"}},
 
 {id:"toon",n:{hu:"Mesefigurák, hősök",en:"Cartoon & comic heroes"},w:{
-hu:"Batman|Süsü|Vuk|Pókember|Hupikék törpikék|SpongyaBob|Mickey egér|Vasember|Mekk Elek|Superman|Elsa|Pikachu|Garfield|Kacsamesék|Pom Pom|Hulk|Shrek|Frakk|Scooby-Doo|Deadpool|Tom és Jerry|Bob, a mester|Csizmás kandúr|Micimackó|Hamupipőke|Aladdin|Homer Simpson|Donald kacsa|Nemo|Simba|Rozsomák|Ariel|Pinokkió|Kung Fu Panda|Tapsi Hapsi|Popeye|Peppa malac|Amerika Kapitány|Thor|Vili, a veréb",
-en:"Batman|Spider-Man|Smurfs|SpongeBob|Mickey Mouse|Iron Man|Superman|Elsa|Pikachu|Garfield|DuckTales|Hulk|Shrek|Scooby-Doo|Deadpool|Tom and Jerry|Bob the Builder|Puss in Boots|Winnie the Pooh|Cinderella|Aladdin|Homer Simpson|Donald Duck|Nemo|Simba|Wolverine|Ariel|Pinocchio|Kung Fu Panda|Bugs Bunny|Popeye|Peppa Pig|Captain America|Thor|Woody|Buzz Lightyear|Wonder Woman|Sonic|Barbie|Charlie Brown"}},
+hu:"Batman|Süsü|Vuk|Pókember|Hupikék törpikék|SpongyaBob|Mickey egér|Vasember|Mekk Elek|Superman|Elsa|Pikachu|Garfield|Kacsamesék|Pom Pom|Hulk|Frakk|Scooby-Doo|Deadpool|Tom és Jerry|Bob, a mester|Csizmás kandúr|Micimackó|Hamupipőke|Aladdin|Homer Simpson|Donald kacsa|Nemo|Simba|Rozsomák|Ariel|Pinokkió|Kung Fu Panda|Tapsi Hapsi|Popeye|Peppa malac|Amerika Kapitány|Thor|Vili, a veréb",
+en:"Batman|Spider-Man|Smurfs|SpongeBob|Mickey Mouse|Iron Man|Superman|Elsa|Pikachu|Garfield|DuckTales|Hulk|Scooby-Doo|Deadpool|Tom and Jerry|Bob the Builder|Puss in Boots|Winnie the Pooh|Cinderella|Aladdin|Homer Simpson|Donald Duck|Nemo|Simba|Wolverine|Ariel|Pinocchio|Kung Fu Panda|Bugs Bunny|Popeye|Peppa Pig|Captain America|Thor|Woody|Buzz Lightyear|Wonder Woman|Charlie Brown"}},
 
 {id:"tech",n:{hu:"Technológia",en:"Tech"},w:{
 hu:"wifi|QR-kód|drón|bluetooth|kriptovaluta|felhő|chatbot|VR-szemüveg|napelem|3D-nyomtató|okosóra|jelszókezelő|adatvesztés|szerver|akkumulátor|hangfelismerés|router újraindítása|kékhalál|emoji|képernyőkép|kétlépcsős azonosítás|reklámblokkoló|spam|frissítés|villámtöltő|felhőmentés|nyílt forráskód|algoritmus|hőtérkép|arcfelismerés|billentyűzet|pixel|vírusirtó|lemerült telefon|inkognitó mód|széles sávú net|hangposta|sötét mód",
@@ -444,7 +489,7 @@ const CLUES = {
 hu:{
  food:{
   "leves":"gulyás|halászlé|csirkeleves|meggyleves",
-  "édesség":"palacsinta|bejgli|fagylalt|krémes|tejbegríz|somlói galuska|rétes|kürtőskalács|mákos guba|zserbó|gesztenyepüré|túró rudi",
+  "édesség":"palacsinta|bejgli|fagylalt|krémes|tejbegríz|somlói galuska|rétes|kürtőskalács|mákos guba|zserbó|gesztenyepüré",
   "reggeli":"tojásrántotta|müzli|croissant|tükörtojás|szendvics",
   "gyorskaja":"pizza|lángos|hamburger|kebab|hot dog|sajtburger|gyros|sült krumpli|popcorn|tortilla",
   "húsétel":"rántott hús|kolbász|pörkölt|virsli|töltött káposzta",
@@ -493,7 +538,7 @@ hu:{
  house:{
   "konyhában":"mikró|teáskanna|serpenyő|dugóhúzó|fűszertartó|reszelő|befőttesüveg|sótartó|kaparós szivacs|hűtő|mosogatógép",
   "fürdőszobában":"fogkefe|zuhanyfej|törölköző|WC-papír|fürdőszobamérleg|hajszárító",
-  "hálószobában":"matrac|párna|takaró|pizsama|ébresztőóra|éjjeliszekrény|papucs",
+  "hálószobában":"matrac|párna|takaró|pizsama|ébresztőóra|éjjeliszekrény",
   "nagy gép":"porszívó|mosógép|vasaló",
   "bútor":"kanapé|könyvespolc|hokedli|fogas|szőnyeg",
   "falon vagy árammal":"villanykapcsoló|konnektor|hosszabbító|radiátor|falióra|kilincs",
@@ -534,7 +579,7 @@ hu:{
   "szolgáltatás":"autómosó|fodrászat|szerviz|tetováló szalon"},
  movie:{
   "nem élőszereplős":"Shrek|L'ecsó|Coco|Az oroszlánkirály|Gru|Toy Story|Jégvarázs|Némó nyomában",
-  "képregényhős":"Bosszúállók|Pókember|Joker|Vasember|Batman|A Sötét Lovag",
+  "képregényhős":"Bosszúállók|Joker|A Sötét Lovag|Fekete Párduc|A galaxis őrzői",
   "űr vagy jövő":"Mátrix|Csillagok háborúja|Csillagok között|Terminátor|E.T.|A nyolcadik utas|Avatar|Mad Max",
   "ijesztő":"Ragyogás|Cápa|Sikoly|A bárányok hallgatnak|Hetedik",
   "nevetni lehet rajta":"Csupasz pisztoly|Amerikai pite|Reszkessetek, betörők|Másnaposok|Különben dühbe jövünk|Üvegtigris|Valami Amerika|Ace Ventura",
@@ -544,7 +589,7 @@ hu:{
   "bűnözőkről szól":"A keresztapa|Trainspotting|Ponyvaregény|A remény rabjai|Kontroll",
   "elgondolkodtató":"Eredet|Barbie|Oppenheimer|Forrest Gump|A Zöld Mérföld|A Pál utcai fiúk"},
  show:{
-  "rajzfilm":"Simpson család|Rick és Morty|Family Guy|Süsü|SpongyaBob|South Park|Avatar – Aang legendája",
+  "rajzfilm":"Simpson család|Rick és Morty|Family Guy|South Park|Avatar – Aang legendája",
   "vígjáték":"Jóbarátok|Agymenők|Ted Lasso|A hivatal",
   "bűnügyi":"Kobra 11|Breaking Bad|Peaky Blinders|Narcos|A nagy pénzrablás|Sons of Anarchy|Better Call Saul|A Mentalista|Sherlock",
   "sci-fi vagy fantasy":"Trónok harca|Stranger Things|Dark|Fekete tükör|Lost|The Last of Us|Vaják|A mandalóri|Alkonyzóna",
@@ -577,7 +622,7 @@ hu:{
  school:{
   "számonkérés":"vizsgaidőszak|ZH|utóvizsga|tétel|érettségi|felvételi|szigorlat|szóbeli|dolgozat|osztályzat|puska",
   "be kell adni":"szakdolgozat|házi feladat|beadandó|kiselőadás|jegyzet|szorgalmi",
-  "hely az épületben":"kollégium|büfé|könyvtár|tanterem|menza|tanári|szertár|padsor",
+  "hely az épületben":"kollégium|büfé|tanterem|menza|tanári|szertár|padsor",
   "ember vagy csoport":"gyakvezér|padtárs|évfolyamtárs|tankör|gólyatábor",
   "papírmunka":"diákigazolvány|kredit|Neptun|ellenőrző|katalógus|ösztöndíj|szemeszter",
   "óra vagy program":"előadás|laborgyakorlat|szünet|osztálykirándulás|tornaóra",
@@ -609,7 +654,7 @@ hu:{
   "magyar rajzfilm":"Süsü|Vuk|Mekk Elek|Pom Pom|Frakk|Vili, a veréb",
   "Disney":"Elsa|Hamupipőke|Aladdin|Nemo|Simba|Ariel|Pinokkió|Mickey egér|Donald kacsa",
   "állat a főszereplő":"Garfield|Tom és Jerry|Csizmás kandúr|Micimackó|Kung Fu Panda|Tapsi Hapsi|Peppa malac|Scooby-Doo|Pikachu|Kacsamesék",
-  "tévésorozatból ismerős":"SpongyaBob|Homer Simpson|Bob, a mester|Popeye|Shrek|Hupikék törpikék"},
+  "tévésorozatból ismerős":"SpongyaBob|Homer Simpson|Bob, a mester|Popeye|Hupikék törpikék"},
  tech:{
   "meg tudod fogni":"drón|VR-szemüveg|napelem|3D-nyomtató|okosóra|akkumulátor|billentyűzet|szerver|villámtöltő",
   "biztonság":"jelszókezelő|kétlépcsős azonosítás|vírusirtó|arcfelismerés|inkognitó mód|reklámblokkoló",
@@ -720,7 +765,7 @@ en:{
   "a service":"car wash|hair salon|repair shop|tattoo parlor"},
  movie:{
   "animated":"Shrek|Ratatouille|Coco|The Lion King|Despicable Me|Toy Story|Frozen|Finding Nemo",
-  "comic book hero":"The Avengers|Spider-Man|Joker|Iron Man|Batman|The Dark Knight",
+  "comic book hero":"The Avengers|Joker|The Dark Knight|Black Panther|Guardians of the Galaxy",
   "space or the future":"The Matrix|Star Wars|Interstellar|The Terminator|E.T.|Alien|Avatar|Mad Max",
   "scary":"The Shining|Jaws|Scream|The Silence of the Lambs|Se7en|Get Out",
   "meant to be funny":"The Naked Gun|American Pie|Home Alone|The Hangover|Ace Ventura|Mean Girls|Groundhog Day",
@@ -730,7 +775,7 @@ en:{
   "about criminals":"The Godfather|Trainspotting|Pulp Fiction|The Shawshank Redemption|Goodfellas",
   "makes you think":"Inception|Barbie|Oppenheimer|Forrest Gump|The Green Mile"},
  show:{
-  "animated":"The Simpsons|Rick and Morty|Family Guy|SpongeBob|South Park|Avatar: The Last Airbender",
+  "animated":"The Simpsons|Rick and Morty|Family Guy|South Park|Avatar: The Last Airbender",
   "comedy":"Friends|The Office|Brooklyn Nine-Nine|The Big Bang Theory|Ted Lasso|Modern Family",
   "crime":"Breaking Bad|Peaky Blinders|Narcos|Money Heist|Sons of Anarchy|Better Call Saul|Sherlock|Prison Break",
   "sci-fi or fantasy":"Game of Thrones|Stranger Things|Dark|Black Mirror|Lost|The Last of Us|The Witcher|The Mandalorian|Severance",
@@ -756,10 +801,10 @@ en:{
  school:{
   "being tested":"exam period|pop quiz|retake exam|final exam|oral exam|admissions|grade|cheat sheet|report card",
   "something to hand in":"thesis|homework|assignment|group project|lecture notes",
-  "a place in the building":"dorm|cafeteria|library|classroom|staff room|locker|whiteboard",
+  "a place in the building":"dorm|cafeteria|classroom|staff room|locker|whiteboard",
   "a person or a group":"teaching assistant|deskmate|classmate|principal|freshman week",
   "paperwork":"student ID|credits|scholarship|attendance|semester|hall pass|yearbook",
-  "a class or an event":"lecture|lab session|break|field trip|PE class|graduation|detention",
+  "a class or an event":"lecture|lab session|break|field trip|PE class|detention",
   "an object":"school bell|projector|backpack|school bus|school lunch"},
  game:{
   "shooter":"Counter-Strike|Call of Duty|Valorant|Overwatch|Doom|Half-Life|Fortnite",
@@ -778,10 +823,9 @@ en:{
   "on a desk or in a drawer":"Lego|Rubik's Cube|Ray-Ban|Sharpie|Post-it|WD-40|IKEA"},
  toon:{
   "superhero":"Batman|Spider-Man|Iron Man|Superman|Hulk|Deadpool|Wolverine|Captain America|Thor|Wonder Woman",
-  "Disney":"Elsa|Cinderella|Aladdin|Nemo|Simba|Ariel|Pinocchio|Mickey Mouse|Donald Duck",
+  "Disney":"Elsa|Cinderella|Aladdin|Nemo|Simba|Ariel|Pinocchio|Mickey Mouse|Donald Duck|Woody|Buzz Lightyear",
   "an animal is the main character":"Garfield|Tom and Jerry|Puss in Boots|Winnie the Pooh|Kung Fu Panda|Bugs Bunny|Peppa Pig|Scooby-Doo|Pikachu|DuckTales",
-  "from a TV series":"SpongeBob|Homer Simpson|Bob the Builder|Popeye|Smurfs|Charlie Brown",
-  "from a film, not a series":"Woody|Buzz Lightyear|Barbie|Sonic|Shrek"},
+  "from a TV series":"SpongeBob|Homer Simpson|Bob the Builder|Popeye|Smurfs|Charlie Brown"},
  tech:{
   "you can hold it":"drone|VR headset|solar panel|3D printer|smartwatch|battery|keyboard|server|fast charger",
   "security":"password manager|two-factor auth|antivirus|face unlock|incognito mode|ad blocker",
@@ -843,7 +887,27 @@ hu:{
  newRound:'Új kör', settings:'Beállítások',
  letters:(w,l,f)=> (w>1? w+' szó · ':'') + l+' betű · kezdőbetű: '+f,
  decoy:d=>'Álszó: '+d, decoyNote:'(nem ez a titkos szó)',
- clue:c=>'Nyom: '+c
+ clue:c=>'Nyom: '+c,
+ rulesBtn:'Hogyan kell játszani?', rulesEyebrow:'Szabályok', rulesH:'Hogyan kell játszani?',
+ rulesSub:'Mindenki ugyanazt a titkos szót kapja, kivéve a kémet. Ti a kémet keresitek, ő a szót.',
+ rules:[
+  ['Osztás','Adjátok körbe a telefont. Mindenki nyomva tartja a kártyát, elolvassa, elengedi, és továbbadja. A civilek a titkos szót látják, a kém csak azt, hogy ő a kém, meg amit a kémmód még elárul neki.'],
+  ['Egy-egy szó','A telefon kiírja, ki kezd. Tőle indulva sorban mindenki mond egy szót, ami kapcsolódik a titkos szóhoz. Ha marad idő, jöhet még egy kör.'],
+  ['Szavazás','Háromra mindenki rámutat arra, akit kémnek gondol. Akire a legtöbben mutatnak, annak a nevét nyomjátok meg. Döntetlennél beszéljétek meg, és szavazzatok újra.'],
+  ['Pontok','Ha a kémet választottátok, a csapat kap pontot. Ha ártatlant, a kémek. A lebukott kém még tippelhet egyet: ha kitalálja a titkos szót, mégis ő viszi a pontot (erre van gomb az eredménynél).']],
+ tipsLbl:'Tippek',
+ tips:[
+  ['Civileknek:','elég konkrét szót mondj, hogy a többiek lássák, tudod a szót, de ne annyira, hogy a kém is rájöjjön.'],
+  ['Kémnek:','figyeld, mit mondanak a többiek, és mondj valami általánosat, ami sok mindenre ráillik. Közben próbáld kitalálni a szót.'],
+  ['Több kém:','a kémek nem tudják egymásról, ki a másik. Elég egyet elkapni.'],
+  ['Első játékhoz:','a „téma” vagy a „nyom” kémmód a legjobb. A „semmi” a rutinosaknak való.']],
+ back:'Vissza',
+ fbLink:'Javasolj szót · jelezz hibát', fbTitle:'Javaslat: ',
+ fbBody:'**Melyik témakörbe?**\n\n\n**Szavak, ötlet vagy a hiba leírása:**\n\n\n**Nyelv:** magyar\n',
+ fbWord:'Gond van ezzel a szóval? Jelezd',
+ fbWordTitle:(w,c)=>'Szó: '+w+' ('+c+')',
+ fbWordBody:(c,id,w,clue)=>'**Témakör:** '+c+' ('+id+')\n**Szó:** '+w+(clue? '\n**Nyom:** '+clue : '')+
+   '\n**Nyelv:** magyar\n\n**Mi a gond vele?** (elírás, túl nehéz, rossz nyom, máshova illik…)\n\n'
 },
 en:{
  logo:"Who's the <span>spy</span>?", tagline:'Word party game · one phone',
@@ -884,7 +948,27 @@ en:{
  newRound:'New round', settings:'Settings',
  letters:(w,l,f)=> (w>1? w+' words · ':'') + l+' letters · starts with '+f,
  decoy:d=>'Decoy: '+d, decoyNote:'(this is not the secret word)',
- clue:c=>'Clue: '+c
+ clue:c=>'Clue: '+c,
+ rulesBtn:'How to play', rulesEyebrow:'Rules', rulesH:'How to play',
+ rulesSub:'Everyone gets the same secret word, except the spy. You hunt the spy; the spy hunts the word.',
+ rules:[
+  ['Deal','Pass the phone around. Each player presses and holds the card, reads it, lets go and passes it on. Civilians see the secret word. The spy only sees that they are the spy, plus whatever the spy mode gives them.'],
+  ['One word each','The phone shows who starts. Going around from them, everyone says one word linked to the secret word. Time left? Go around again.'],
+  ['Vote','On three, everyone points at who they think the spy is. Tap the name of whoever got the most fingers. Tie? Talk it over and vote again.'],
+  ['Points','Caught the spy: a point for the team. Picked someone innocent: a point for the spies. A caught spy gets one guess at the secret word. If they get it, the point goes to the spies instead (there’s a button for that on the result screen).']],
+ tipsLbl:'Tips',
+ tips:[
+  ['Civilians:','be specific enough that the others can tell you know the word, but not so obvious that the spy works it out.'],
+  ['Spy:','listen to the others and say something vague that fits lots of things. Meanwhile, try to work out the word.'],
+  ['Several spies:','the spies don’t know who the other spies are. Catching one is enough.'],
+  ['First game?','Use the “theme” or “clue” spy mode. “Nothing” is for veterans.']],
+ back:'Back',
+ fbLink:'Suggest a word · report a bug', fbTitle:'Suggestion: ',
+ fbBody:'**Which category?**\n\n\n**Words, idea or what went wrong:**\n\n\n**Language:** English\n',
+ fbWord:'Something off with this word? Report it',
+ fbWordTitle:(w,c)=>'Word: '+w+' ('+c+')',
+ fbWordBody:(c,id,w,clue)=>'**Category:** '+c+' ('+id+')\n**Word:** '+w+(clue? '\n**Clue:** '+clue : '')+
+   '\n**Language:** English\n\n**What’s wrong with it?** (typo, too hard, bad clue, wrong category…)\n\n'
 }};
 
 /* ================= ÁLLAPOT ================= */
@@ -892,7 +976,7 @@ const S = {
   lang:'hu', players:5, imposters:1, useNames:false, names:[],
   cats:["food","animal","movie","huartist"], hintLevel:'cat', timeSet:180,
   round:0, team:0, imp:0,
-  word:"", catName:"", decoy:"", clue:"", impIdx:[], dealIdx:0, starter:0, pointGiven:null
+  word:"", catName:"", packId:"", decoy:"", clue:"", impIdx:[], dealIdx:0, starter:0, pointGiven:null
 };
 const $ = id => document.getElementById(id);
 const t = () => T[S.lang];
@@ -955,7 +1039,9 @@ function applyLang(){
     const v = L[el.dataset.i]; if(typeof v === 'string') el.textContent = v;
   });
   $('logo').innerHTML = L.logo;
-  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.l===S.lang)));
+  document.querySelectorAll('.lang [data-l]').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.l===S.lang)));
+  renderRules();
+  $('fbLink').href = issueUrl(L.fbTitle, L.fbBody);
   buildClueMap();
   $('btnStart').textContent = L.deal;
   $('btnNext').textContent = L.next;
@@ -976,8 +1062,35 @@ function applyLang(){
     S.cats = S.cats.concat(usablePacks().slice(0,4).map(p=>p.id));
 }
 
-document.querySelectorAll('.lang button').forEach(b=>
+document.querySelectorAll('.lang [data-l]').forEach(b=>
   b.onclick = ()=>{ S.lang=b.dataset.l; applyLang(); renderSetup(); save(); });
+
+/* ================= SZABÁLYOK ================= */
+function renderRules(){
+  const L = t();
+  $('rulesSteps').replaceChildren(...L.rules.map(([k,v])=>{
+    const li=document.createElement('li'), a=document.createElement('div'), b=document.createElement('div');
+    a.className='k'; a.textContent=k; b.className='v'; b.textContent=v; li.append(a,b); return li;
+  }));
+  $('rulesTips').replaceChildren(...L.tips.map(([k,v])=>{
+    const li=document.createElement('li'), b=document.createElement('b');
+    b.textContent=k; li.append(b,' '+v); return li;
+  }));
+}
+let rulesFrom = 0;
+function openRules(){ rulesFrom = window.scrollY; show('s-rules'); history.pushState({rules:1},''); }
+function closeRules(){ show('s-setup'); window.scrollTo(0, rulesFrom); }
+$('btnHelp').onclick = openRules;
+$('btnRules').onclick = openRules;
+$('btnRulesBack').onclick = ()=>{ if(history.state && history.state.rules) history.back(); else closeRules(); };
+/* a telefon vissza gombja is a beállításokhoz vigyen, ne az oldalról el */
+window.addEventListener('popstate', ()=>{ if($('s-rules').classList.contains('on')) closeRules(); });
+
+/* ================= VISSZAJELZÉS (GitHub issue) ================= */
+const ISSUES = 'https://github.com/balazsap0224/kiakem/issues/new';
+function issueUrl(title, body){
+  return ISSUES+'?title='+encodeURIComponent(title)+'&body='+encodeURIComponent(body);
+}
 
 /* ================= BEÁLLÍTÁSOK ================= */
 function maxImp(){ return Math.max(1, Math.floor((S.players-1)/2)); }
@@ -1065,7 +1178,7 @@ function newRound(){
   if(!fresh.length){ words.forEach(w=>used.delete(key(w))); fresh = words; }
   S.word = fresh[Math.floor(Math.random()*fresh.length)];
   used.add(key(S.word));
-  S.catName = packName(pack);
+  S.catName = packName(pack); S.packId = pack.id;
   const others = words.filter(x=>x!==S.word);
   S.decoy = others.length ? others[Math.floor(Math.random()*others.length)] : S.word;
   S.clue = (CLUEMAP[pack.id] && CLUEMAP[pack.id][S.word]) || '';
@@ -1213,6 +1326,8 @@ function result(ejected){
   who.textContent=S.impIdx.map(nameOf).join(', ');
   th.style.cssText='color:#8695BE;font-size:13px'; th.textContent=L.theme(S.catName);
   imps.replaceChildren(L.spyWas(S.imposters>1)+' ', who, document.createElement('br'), th);
+  $('fbWord').href = issueUrl(L.fbWordTitle(S.word, S.catName),
+    L.fbWordBody(S.catName, S.packId, S.word, S.hintLevel==='clue' ? S.clue : ''));
   $('btnFlip').style.display=(S.pointGiven==='team')?'block':'none';
   $('btnFlip').textContent=L.flip; $('btnFlip').disabled=false;
   updScore(); show('s-result');
