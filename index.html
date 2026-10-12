@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101728">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KÉM">
+<meta name="description" content="Szavas partijáték egy telefonnal — 26 témakör, magyarul és angolul.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ki a kém? — szavas partijáték egy telefonnal">
+<meta property="og:description" content="Ingyenes, reklám nélkül, telepítés nélkül. 26 témakör, magyarul és angolul, offline is megy.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>KÉM — szavas partijáték</title>
+<style>
+/* saját szerverről, nem a Google-től (GDPR + offline) — licenc: fonts/OFL-*.txt */
+@font-face{font-family:"Archivo Black";font-weight:400;font-display:swap;src:url(fonts/archivo-black-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Archivo Black";font-weight:400;font-display:swap;src:url(fonts/archivo-black-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Inter";font-weight:400 700;font-display:swap;src:url(fonts/inter-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Inter";font-weight:400 700;font-display:swap;src:url(fonts/inter-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"JetBrains Mono";font-weight:500 700;font-display:swap;src:url(fonts/jetbrains-mono-latin-ext.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"JetBrains Mono";font-weight:500 700;font-display:swap;src:url(fonts/jetbrains-mono-latin.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+:root{
+  --ink:#101728; --ink2:#1A2440; --ink3:#26325A;
+  --paper:#F2ECE1; --pink:#FF4E6A; --blue:#5B8CFF; --mustard:#FFC44D;
+  --display:"Archivo Black","Haettenschweiler","Impact",system-ui,sans-serif;
+  --body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;background:var(--ink);color:var(--paper);font-family:var(--body);
+  font-size:16px;line-height:1.45;overscroll-behavior:none;
+  background-image:
+    radial-gradient(circle at 15% -10%, rgba(91,140,255,.16), transparent 55%),
+    radial-gradient(circle at 92% 8%, rgba(255,78,106,.13), transparent 50%);
+  background-attachment:fixed;
+}
+.app{max-width:480px;margin:0 auto;min-height:100%;
+  padding:max(16px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom));
+  display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;animation:in .28s ease}
+.screen.on{display:flex}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#8695BE}
+h1.logo{font-family:var(--display);font-size:clamp(34px,11.5vw,50px);line-height:.88;
+  letter-spacing:-.03em;margin:2px 0 0;text-transform:uppercase}
+h1.logo span{color:var(--pink)}
+h2{font-family:var(--display);font-size:26px;line-height:1.05;letter-spacing:-.02em;margin:0 0 4px;text-transform:uppercase}
+.sub{color:#93A0C4;font-size:14px;margin:0}
+
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.lang{display:flex;gap:4px;flex:0 0 auto}
+.lang button{border:1px solid #38457A;background:#212C4E;color:#8695BE;border-radius:9px;
+  padding:6px 11px;font-family:var(--mono);font-size:12px;cursor:pointer;letter-spacing:.08em}
+.lang button[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper);font-weight:700}
+
+.block{background:var(--ink2);border:1px solid #2A3560;border-radius:16px;padding:14px;margin-top:12px}
+.block .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#8695BE;display:block;margin-bottom:10px}
+
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper .val{font-family:var(--display);font-size:34px;min-width:56px;text-align:center;letter-spacing:-.02em}
+.rnd{width:46px;height:46px;flex:0 0 46px;border-radius:50%;border:1px solid #38457A;background:#212C4E;
+  color:var(--paper);font-size:24px;line-height:1;cursor:pointer;font-family:var(--body)}
+.rnd:active{background:var(--ink3)}
+.rnd:disabled{opacity:.3}
+.stepper .hint{font-size:13px;color:#93A0C4}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid #38457A;background:#212C4E;color:#C7CFE6;border-radius:999px;
+  padding:8px 13px;font-size:14px;cursor:pointer;font-family:var(--body)}
+.chip[aria-pressed="true"]{background:var(--mustard);border-color:var(--mustard);color:#1A1405;font-weight:700}
+.chip.add{border-style:dashed;color:#8695BE}
+.catbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+.mini{background:none;border:0;color:#8695BE;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;cursor:pointer;padding:2px 0}
+
+.rowlink{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #26325A}
+.rowlink:first-of-type{border-top:0}
+.rowlink .t{font-size:15px}
+.rowlink .d{font-size:12.5px;color:#8695BE;margin-top:1px}
+.sw{width:52px;height:31px;flex:0 0 52px;border-radius:999px;border:1px solid #38457A;background:#212C4E;position:relative;cursor:pointer}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:23px;height:23px;border-radius:50%;background:#7C89B2;transition:transform .16s ease,background .16s}
+.sw[aria-pressed="true"]{background:var(--blue);border-color:var(--blue)}
+.sw[aria-pressed="true"]::after{transform:translateX(21px);background:#fff}
+
+.seg{display:flex;gap:6px}
+.seg button{flex:1;padding:9px 2px;border-radius:10px;border:1px solid #38457A;background:#212C4E;
+  color:#C7CFE6;font-family:var(--mono);font-size:12.5px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--paper);color:var(--ink);border-color:var(--paper);font-weight:700}
+.segnote{font-size:12.5px;color:#8695BE;margin-top:9px;min-height:34px}
+#segHint{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+#segHint button{grid-column:span 2}
+#segHint button:nth-child(4),#segHint button:nth-child(5){grid-column:span 3}
+
+input[type=text]{width:100%;background:#212C4E;border:1px solid #38457A;border-radius:10px;
+  padding:11px 12px;color:var(--paper);font-family:var(--body);font-size:15px}
+input[type=text]::placeholder{color:#66739C}
+textarea{width:100%;min-height:110px;background:#212C4E;border:1px solid #38457A;border-radius:10px;
+  padding:11px 12px;color:var(--paper);font-family:var(--body);font-size:15px;resize:vertical}
+.names{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+.btn{display:block;width:100%;padding:17px;border-radius:14px;border:0;cursor:pointer;
+  font-family:var(--display);font-size:19px;letter-spacing:.01em;text-transform:uppercase}
+.btn.primary{background:var(--pink);color:#2A0710}
+.btn.paper{background:var(--paper);color:var(--ink)}
+.btn.ghost{background:transparent;color:#93A0C4;border:1px solid #38457A;font-family:var(--body);font-size:15px;text-transform:none;padding:13px}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.4}
+.foot{margin-top:auto;padding-top:16px;display:flex;flex-direction:column;gap:9px}
+.err{color:var(--pink);font-size:13.5px;margin-top:10px;min-height:19px}
+
+.dealwrap{flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px}
+.passto{text-align:center}
+.passto .who{font-family:var(--display);font-size:clamp(28px,8.5vw,40px);line-height:1;letter-spacing:-.02em;margin-top:6px}
+
+.card{position:relative;width:100%;aspect-ratio:3/4;max-height:56vh;border-radius:22px;
+  background:var(--paper);color:var(--ink);border:0;cursor:pointer;overflow:hidden;
+  user-select:none;-webkit-user-select:none;touch-action:none;
+  box-shadow:0 18px 0 -6px #0B1120, 0 22px 40px rgba(0,0,0,.45);font-family:var(--body)}
+.card .face{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:9px;padding:24px;transition:opacity .13s ease}
+.card .front{opacity:0}
+.card.open .back{opacity:0}
+.card.open .front{opacity:1}
+.card .dots{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.card .dots i{width:13px;height:13px;border-radius:50%;background:rgba(16,23,40,.2);display:block}
+.card .thumb{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:rgba(16,23,40,.5);margin-top:16px;text-align:center}
+.card .role{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#4A5578}
+.card .word{font-family:var(--display);font-size:clamp(26px,8.5vw,38px);line-height:1.02;letter-spacing:-.02em;
+  text-transform:uppercase;text-align:center;color:var(--ink)}
+.card .cat{font-family:var(--mono);font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#4A5578;text-align:center}
+.card .tip{font-family:var(--mono);font-size:14px;font-weight:700;letter-spacing:.03em;text-align:center;
+  padding:10px 16px;margin-top:2px;border-radius:11px;background:rgba(16,23,40,.09);
+  color:var(--ink);white-space:pre-line;line-height:1.35}
+.card .tip:empty{display:none}
+/* csak felfedés közben látszik, hogy kém — előtte-utána semmi nem árulja el */
+.card.open.spy .word,.card.open.spy .role{color:#A80B2A}
+.card.open.spy::before{content:"";position:absolute;inset:10px;border:3px solid #A80B2A;
+  border-radius:14px;pointer-events:none}
+.card::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(45deg,rgba(16,23,40,.045) 0 2px,transparent 2px 5px)}
+.hint{text-align:center;font-size:13.5px;color:#93A0C4;min-height:20px}
+
+.bigtimer{font-family:var(--display);font-size:clamp(56px,20vw,86px);line-height:1;letter-spacing:-.03em;
+  text-align:center;font-variant-numeric:tabular-nums}
+.bigtimer.low{color:var(--pink)}
+.starter{background:var(--ink2);border:1px solid #2A3560;border-radius:16px;padding:18px;text-align:center;margin-top:12px}
+.starter .who{font-family:var(--display);font-size:30px;letter-spacing:-.02em;margin-top:4px}
+.score{display:flex;gap:10px;margin-top:12px}
+.score div{flex:1;background:var(--ink2);border:1px solid #2A3560;border-radius:14px;padding:11px;text-align:center}
+.score .n{font-family:var(--display);font-size:28px;line-height:1}
+.score .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#8695BE}
+
+.plist{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.plist button{padding:15px 10px;border-radius:13px;border:1px solid #38457A;background:#212C4E;color:var(--paper);
+  font-family:var(--body);font-size:15.5px;cursor:pointer;text-align:left}
+.plist button:active{background:var(--ink3)}
+.verdict{border-radius:18px;padding:20px;text-align:center;margin-top:14px;color:var(--ink)}
+.verdict.good{background:var(--mustard)}
+.verdict.bad{background:var(--pink)}
+.verdict .h{font-family:var(--display);font-size:27px;line-height:1.05;text-transform:uppercase;letter-spacing:-.02em}
+.verdict .b{font-size:14.5px;margin-top:6px;opacity:.8}
+.reveal{background:var(--ink2);border:1px solid #2A3560;border-radius:16px;padding:16px;margin-top:12px}
+.reveal .w{font-family:var(--display);font-size:32px;letter-spacing:-.02em;text-transform:uppercase;margin-top:2px}
+.reveal .imps{margin-top:12px;font-size:15px}
+.reveal .imps b{color:var(--pink)}
+.tiny{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#5D6A94;text-align:center;margin-top:16px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ SETUP ============ -->
+<section id="s-setup" class="screen on">
+  <div class="topbar">
+    <div>
+      <div class="eyebrow" data-i="tagline"></div>
+      <h1 class="logo" id="logo"></h1>
+    </div>
+    <div class="lang">
+      <button data-l="hu" aria-pressed="true">HU</button>
+      <button data-l="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+
+  <div class="block">
+    <span class="lbl" data-i="players"></span>
+    <div class="stepper">
+      <button class="rnd" id="pMinus">–</button>
+      <div class="val" id="pVal">5</div>
+      <button class="rnd" id="pPlus">+</button>
+      <div class="hint" data-i="playerRange"></div>
+    </div>
+    <div class="rowlink" style="margin-top:12px">
+      <div><div class="t" data-i="useNames"></div><div class="d" data-i="useNamesD"></div></div>
+      <button class="sw" id="swNames" aria-pressed="false"></button>
+    </div>
+    <div id="nameBox" class="names" style="display:none"></div>
+  </div>
+
+  <div class="block">
+    <span class="lbl" data-i="spies"></span>
+    <div class="stepper">
+      <button class="rnd" id="iMinus">–</button>
+      <div class="val" id="iVal">1</div>
+      <button class="rnd" id="iPlus">+</button>
+      <div class="hint" id="iHint"></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="catbar">
+      <span class="lbl" style="margin:0" data-i="cats"></span>
+      <button class="mini" id="btnAll"></button>
+    </div>
+    <div class="chips" id="catChips"></div>
+    <div class="segnote" id="catNote" style="min-height:0;margin-top:10px"></div>
+  </div>
+
+  <div class="block">
+    <span class="lbl" data-i="spyGets"></span>
+    <div class="seg" id="segHint">
+      <button data-h="none"></button>
+      <button data-h="cat" aria-pressed="true"></button>
+      <button data-h="letters"></button>
+      <button data-h="clue"></button>
+      <button data-h="decoy"></button>
+    </div>
+    <div class="segnote" id="hintNote"></div>
+    <div class="rowlink"><div><div class="t" data-i="timerT"></div><div class="d" data-i="timerD"></div></div></div>
+    <div class="seg" id="segTime">
+      <button data-t="0"></button>
+      <button data-t="90">1:30</button>
+      <button data-t="180" aria-pressed="true">3:00</button>
+      <button data-t="300">5:00</button>
+    </div>
+  </div>
+
+  <div class="err" id="setupErr"></div>
+  <div class="foot"><button class="btn primary" id="btnStart"></button></div>
+  <div class="tiny" data-i="passTiny"></div>
+</section>
+
+<!-- ============ DEAL ============ -->
+<section id="s-deal" class="screen">
+  <div class="dealwrap">
+    <div class="passto">
+      <div class="eyebrow" id="dealCount"></div>
+      <div class="who" id="dealWho"></div>
+    </div>
+    <button class="card" id="card">
+      <div class="face back">
+        <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="thumb" id="cardThumb"></div>
+      </div>
+      <div class="face front">
+        <div class="role" id="cardRole"></div>
+        <div class="word" id="cardWord"></div>
+        <div class="cat" id="cardCat"></div>
+        <div class="tip" id="cardTip"></div>
+      </div>
+    </button>
+    <div class="hint" id="dealHint"></div>
+  </div>
+  <div class="foot"><button class="btn paper" id="btnNext" disabled></button></div>
+</section>
+
+<!-- ============ ROUND ============ -->
+<section id="s-round" class="screen">
+  <div class="eyebrow" id="roundNo"></div>
+  <h2 data-i="roundH"></h2>
+  <p class="sub" id="roundTheme"></p>
+  <div class="starter">
+    <div class="eyebrow" data-i="starts"></div>
+    <div class="who" id="starterName"></div>
+  </div>
+  <div style="margin-top:22px"><div class="bigtimer" id="timer">3:00</div></div>
+  <div class="score">
+    <div><div class="n" id="scoreTeam">0</div><div class="k" data-i="team"></div></div>
+    <div><div class="n" id="scoreImp">0</div><div class="k" data-i="spiesK"></div></div>
+  </div>
+  <div class="foot">
+    <button class="btn paper" id="btnTimer"></button>
+    <button class="btn primary" id="btnVote"></button>
+  </div>
+</section>
+
+<!-- ============ VOTE ============ -->
+<section id="s-vote" class="screen">
+  <div class="eyebrow" data-i="voteEyebrow"></div>
+  <h2 data-i="voteH"></h2>
+  <p class="sub" data-i="voteSub"></p>
+  <div class="plist" id="voteList"></div>
+  <div class="foot"><button class="btn ghost" id="btnSkipVote"></button></div>
+</section>
+
+<!-- ============ RESULT ============ -->
+<section id="s-result" class="screen">
+  <div class="eyebrow" data-i="resultEyebrow"></div>
+  <div class="verdict" id="verdict"><div class="h"></div><div class="b"></div></div>
+  <div class="reveal">
+    <div class="eyebrow" data-i="secretWord"></div>
+    <div class="w" id="revWord"></div>
+    <div class="imps" id="revImps"></div>
+  </div>
+  <div class="score">
+    <div><div class="n" id="scoreTeam2">0</div><div class="k" data-i="team"></div></div>
+    <div><div class="n" id="scoreImp2">0</div><div class="k" data-i="spiesK"></div></div>
+  </div>
+  <div class="foot">
+    <button class="btn ghost" id="btnFlip"></button>
+    <button class="btn primary" id="btnAgain"></button>
+    <button class="btn ghost" id="btnHome"></button>
+  </div>
+</section>
+
+</div>
+
+<script>
+/* ================= SZÓCSOMAGOK / WORD PACKS ================= */
+const PACKS = [
+{id:"food",n:{hu:"Ételek",en:"Food"},w:{
+hu:"gulyás|pizza|lángos|palacsinta|sushi|hamburger|rántott hús|túrós csusza|halászlé|kolbász|tojásrántotta|lasagne|kebab|körözött|rakott krumpli|bejgli|fagylalt|müzli|zsíros kenyér|tortilla|gombóc|paprikás krumpli|krémes|pörkölt|hot dog|sajtburger|tejbegríz|csirkeleves|gyros|túró rudi|töltött káposzta|somlói galuska|rétes|pogácsa|kürtőskalács|virsli|sült krumpli|spagetti|szendvics|nokedli|savanyú káposzta|mákos guba|croissant|popcorn|lecsó|zserbó|tükörtojás|gesztenyepüré|meggyleves",
+en:"goulash|pizza|pancakes|sushi|burger|fried chicken|mac and cheese|fish and chips|hot dog|scrambled eggs|lasagna|kebab|mashed potatoes|apple pie|ice cream|granola|toast|tortilla|dumplings|french fries|cheesecake|beef stew|cheeseburger|rice pudding|chicken soup|gyros|meatballs|stuffed peppers|strudel|bagel|churros|sausage|spaghetti|sandwich|croissant|popcorn|nachos|ramen|pad thai|paella|risotto|waffles|donut|pretzel|steak|omelette|fried rice|burrito|clam chowder|banana bread"}},
+
+{id:"drink",n:{hu:"Italok",en:"Drinks"},w:{
+hu:"kávé|fröccs|kakaó|limonádé|pálinka|energiaital|tea|sör|forralt bor|kombucha|turmix|szódavíz|narancslé|koktél|pezsgő|jeges kávé|kefir|gyömbérsör|málnaszörp|tejeskávé|whisky|mojito|ásványvíz|meggylé|csapvíz|kapucsínó|zöld tea|bambi|kóla|paradicsomlé|latte|rum|tejturmix|gyömbértea|almalé|jeges tea|eszpresszó|vörösbor|unicum|fehér bor",
+en:"coffee|spritzer|hot chocolate|lemonade|whiskey|energy drink|tea|beer|mulled wine|kombucha|smoothie|soda water|orange juice|cocktail|champagne|iced coffee|milkshake|ginger beer|iced tea|latte|mojito|sparkling water|cherry juice|tap water|cappuccino|green tea|cola|tomato juice|rum|apple juice|espresso|red wine|gin and tonic|protein shake|coconut water|root beer|eggnog|matcha|white wine|lemon water"}},
+
+{id:"animal",n:{hu:"Állatok",en:"Animals"},w:{
+hu:"elefánt|pingvin|denevér|szúnyog|hörcsög|krokodil|polip|zsiráf|sün|bagoly|gepárd|hangya|teknős|farkas|papagáj|cápa|méhecske|borz|láma|mókus|kaméleon|medve|béka|pillangó|strucc|delfin|oroszlán|kígyó|pók|bálna|galamb|nyúl|róka|vakond|szarvas|skorpió|flamingó|koala|hiúz|csiga|homár|sas|birka|kacsa|lajhár|szitakötő|vaddisznó|pávián|tücsök|hangyász",
+en:"elephant|penguin|bat|mosquito|hamster|crocodile|octopus|giraffe|hedgehog|owl|cheetah|ant|turtle|wolf|parrot|shark|bee|badger|llama|squirrel|chameleon|bear|frog|butterfly|ostrich|dolphin|lion|snake|spider|whale|pigeon|rabbit|fox|mole|deer|scorpion|flamingo|koala|lynx|snail|lobster|eagle|sheep|duck|sloth|dragonfly|wild boar|baboon|cricket|anteater"}},
+
+{id:"geo",n:{hu:"Országok, városok",en:"Countries & cities"},w:{
+hu:"Japán|Prága|Izland|Bécs|Brazília|Debrecen|New York|Egyiptom|Velence|Norvégia|Isztambul|Ausztrália|Szeged|Barcelona|Kanada|Berlin|Görögország|Milánó|Marokkó|Pécs|Amszterdam|Svájc|Lisszabon|Dubaj|Krakkó|Párizs|London|Tokió|Róma|India|Mexikó|Skócia|Finnország|Kuba|Bali|Las Vegas|Szlovákia|Horvátország|Kína|Peru|Írország|Hollandia|Sydney|Miskolc|Szentendre|Törökország|Alaszka|Hawaii|Portugália|Vietnám",
+en:"Japan|Prague|Iceland|Vienna|Brazil|New York|Egypt|Venice|Norway|Istanbul|Australia|Barcelona|Canada|Berlin|Greece|Milan|Morocco|Amsterdam|Switzerland|Lisbon|Dubai|Krakow|Paris|London|Tokyo|Rome|India|Mexico|Scotland|Finland|Cuba|Bali|Las Vegas|Budapest|Slovakia|Croatia|China|Peru|Ireland|Netherlands|Sydney|Texas|Alaska|Hawaii|Portugal|Vietnam|Seoul|Cape Town|Chicago|Buenos Aires"}},
+
+{id:"sport",n:{hu:"Sportok",en:"Sports"},w:{
+hu:"vívás|futás|úszás|sakk|kosárlabda|jóga|hegymászás|síelés|teke|kajak|asztalitenisz|box|kézilabda|tenisz|szörf|maraton|torna|curling|golf|biciklizés|evezés|gerelyhajítás|falmászás|darts|vízilabda|snowboard|íjászat|karate|rögbi|jégkorong|foci|súlyemelés|lovaglás|gördeszkázás|triatlon|tollaslabda|birkózás|röplabda|búvárkodás|atlétika|műkorcsolya|rúdugrás|szumó|krikett|baseball",
+en:"fencing|running|swimming|chess|basketball|yoga|climbing|skiing|bowling|kayaking|table tennis|boxing|handball|tennis|surfing|marathon|gymnastics|curling|golf|cycling|rowing|javelin|darts|water polo|snowboarding|archery|karate|rugby|ice hockey|soccer|weightlifting|horse riding|skateboarding|triathlon|badminton|wrestling|volleyball|scuba diving|track and field|figure skating|pole vault|sumo|cricket|baseball|American football"}},
+
+{id:"job",n:{hu:"Foglalkozások",en:"Jobs"},w:{
+hu:"fogorvos|pilóta|tanár|szemetes|programozó|séf|tűzoltó|könyvtáros|bíró|fodrász|asztalos|rendőr|állatorvos|pincér|postás|zenész|építész|pék|gyógyszerész|szinkronszínész|edző|villanyszerelő|könyvelő|idegenvezető|meteorológus|sebész|halász|katona|bűvész|dadus|taxisofőr|régész|farmer|újságíró|takarító|matróz|pszichológus|hentes|kertész|kaszkadőr|influenszer|ügyvéd|portás|festő|szemész|dokumentumfilmes|éjjeliőr|tolmács|vízvezeték-szerelő|díszlettervező",
+en:"dentist|pilot|teacher|garbage collector|programmer|chef|firefighter|librarian|judge|hairdresser|carpenter|police officer|vet|waiter|mail carrier|musician|architect|baker|pharmacist|voice actor|coach|electrician|accountant|tour guide|weather forecaster|surgeon|fisherman|soldier|magician|babysitter|taxi driver|archaeologist|farmer|journalist|cleaner|sailor|psychologist|butcher|gardener|stuntman|influencer|lawyer|receptionist|painter|optician|night guard|interpreter|plumber|set designer|lifeguard"}},
+
+{id:"movie",n:{hu:"Filmek",en:"Movies"},w:{
+hu:"Titanic|Shrek|Mátrix|Jurassic Park|Vissza a jövőbe|A Gyűrűk Ura|Csillagok háborúja|Bosszúállók|Kill Bill|Csillagok között|Harry Potter|A keresztapa|L'ecsó|Terminátor|Csupasz pisztoly|Ragyogás|Eredet|Pókember|Harcosok klubja|Trainspotting|Coco|Joker|Halálos iramban|Rambo|Karib-tenger kalózai|Az oroszlánkirály|Gru|Barbie|Oppenheimer|Toy Story|Vasember|Batman|Jégvarázs|Rocky|Cápa|E.T.|Amerikai pite|Mamma Mia|A nyolcadik utas|Sikoly|Forrest Gump|Reszkessetek, betörők|Másnaposok|Némó nyomában|Indiana Jones|Piszkos tánc|Ponyvaregény|A remény rabjai|Avatar|Különben dühbe jövünk|Gladiátor|A bárányok hallgatnak|Hetedik|Mad Max|A Zöld Mérföld|Az ördög Pradát visel|Micsoda nő!|Üvegtigris|Valami Amerika|Kontroll|A Pál utcai fiúk|A múmia|Ace Ventura|A Sötét Lovag",
+en:"Titanic|Shrek|The Matrix|Jurassic Park|Back to the Future|The Lord of the Rings|Star Wars|The Avengers|Kill Bill|Interstellar|Harry Potter|The Godfather|Ratatouille|The Terminator|The Naked Gun|The Shining|Inception|Spider-Man|Fight Club|Trainspotting|Coco|Joker|Fast and Furious|Rambo|Pirates of the Caribbean|The Lion King|Despicable Me|Barbie|Oppenheimer|Toy Story|Iron Man|Batman|Frozen|Rocky|Jaws|E.T.|American Pie|Mamma Mia|Alien|Scream|Forrest Gump|Home Alone|The Hangover|Finding Nemo|Indiana Jones|Dirty Dancing|Pulp Fiction|The Shawshank Redemption|Avatar|Mean Girls|Gladiator|The Silence of the Lambs|Se7en|Mad Max|The Green Mile|The Devil Wears Prada|Pretty Woman|The Mummy|Ace Ventura|The Dark Knight|Goodfellas|La La Land|Get Out|Groundhog Day"}},
+
+{id:"show",n:{hu:"Sorozatok",en:"TV shows"},w:{
+hu:"Trónok harca|Jóbarátok|Breaking Bad|Stranger Things|Simpson család|Squid Game|A hivatal|Sherlock|Csernobil|Rick és Morty|Peaky Blinders|Dark|Family Guy|Narcos|Mr. Robot|Süsü|Doktor House|Wednesday|Vaják|A korona|Fekete tükör|Lost|SpongyaBob|Szex és New York|South Park|A mandalóri|A nagy pénzrablás|The Last of Us|Vészhelyzet|Agymenők|Kobra 11|Alkonyzóna|Barátok közt|Jóban Rosszban|A Mentalista|Sons of Anarchy|Better Call Saul|Bridgerton|Ted Lasso|Avatar – Aang legendája",
+en:"Game of Thrones|Friends|Breaking Bad|Stranger Things|The Simpsons|Squid Game|The Office|Sherlock|Chernobyl|Rick and Morty|Peaky Blinders|Dark|Family Guy|Narcos|Mr. Robot|House|Wednesday|The Witcher|The Crown|Black Mirror|Lost|SpongeBob|Sex and the City|South Park|The Mandalorian|Money Heist|The Last of Us|Succession|Severance|Brooklyn Nine-Nine|Better Call Saul|The Big Bang Theory|Ted Lasso|Avatar: The Last Airbender|Grey's Anatomy|Bridgerton|Sons of Anarchy|The Boys|Modern Family|Prison Break"}},
+
+{id:"huartist",n:{hu:"Magyar előadók",en:null},w:{
+hu:"Manuel|Beton.Hofi|Dzsúdló|Azahriah|Halott Pénz|Bagossy Brothers|Krúbi|Republic|Quimby|T. Danny|Ákos|LGT|Wellhello|Desh|Follow The Flow|Tankcsapda|Punnany Massif|Bëlga|Rúzsa Magdi|Carson Coma|Bródy János|Omega|Neoton Família|Kispál és a Borz|Margaret Island|Blahalouisiana|Ossian|Majka|Szabó Balázs Bandája|Zaporozsec|30Y|Elefánt|Lóci játszik|Fluor Tomi|Ganxsta Zolee|Illés|Hooligans|Anna and the Barbies|Csík zenekar",en:null}},
+
+{id:"artist",n:{hu:"Nemzetközi előadók",en:"Musicians"},w:{
+hu:"Beyoncé|Drake|Adele|Eminem|Taylor Swift|The Beatles|Queen|Michael Jackson|Rihanna|Travis Scott|Billie Eilish|Kanye West|Ed Sheeran|Coldplay|Nirvana|ABBA|Metallica|Dua Lipa|Bruno Mars|The Weeknd|Lady Gaga|Bob Marley|Elvis Presley|Juice WRLD|Don Toliver|Kendrick Lamar|Pink Floyd|AC/DC|Ariana Grande|Snoop Dogg|Madonna|Daft Punk|SZA|Post Malone|Frank Ocean|Jay-Z|Radiohead|Lana Del Rey|Doja Cat|Linkin Park",
+en:"Beyoncé|Drake|Adele|Eminem|Taylor Swift|The Beatles|Queen|Michael Jackson|Rihanna|Travis Scott|Billie Eilish|Kanye West|Ed Sheeran|Coldplay|Nirvana|ABBA|Metallica|Dua Lipa|Bruno Mars|The Weeknd|Lady Gaga|Bob Marley|Elvis Presley|Juice WRLD|Don Toliver|Kendrick Lamar|Pink Floyd|AC/DC|Ariana Grande|Snoop Dogg|Madonna|Daft Punk|SZA|Post Malone|Frank Ocean|Jay-Z|Radiohead|Lana Del Rey|Doja Cat|Linkin Park"}},
+
+{id:"instr",n:{hu:"Hangszerek",en:"Instruments"},w:{
+hu:"zongora|hegedű|dob|gitár|fuvola|harmonika|cselló|szájharmonika|trombita|xilofon|orgona|basszusgitár|hárfa|tuba|szintetizátor|furulya|tangóharmonika|triangulum|szaxofon|dobgép|nagybőgő|klarinét|ukulele|bendzsó|csörgődob|gong|kürt|cimbalom|duda|marimba|elektromos gitár|mikrofon|metronóm|üstdob|csembaló|okarina|didgeridoo|kolomp",
+en:"piano|violin|drums|guitar|flute|accordion|cello|harmonica|trumpet|xylophone|organ|bass guitar|harp|tuba|synthesizer|recorder|triangle|saxophone|drum machine|double bass|clarinet|ukulele|banjo|tambourine|gong|French horn|bagpipes|marimba|electric guitar|microphone|metronome|timpani|harpsichord|ocarina|didgeridoo|cowbell|kazoo|sitar"}},
+
+{id:"house",n:{hu:"A lakásban",en:"Around the house"},w:{
+hu:"porszívó|hűtő|tükör|matrac|mikró|fogkefe|radiátor|szemeteskuka|függöny|mosógép|kanapé|vasaló|villanykapcsoló|szőnyeg|pizsama|hajszárító|párna|fűszertartó|kulcstartó|hosszabbító|teáskanna|könyvespolc|zuhanyfej|ébresztőóra|cipőkanál|konnektor|papucs|törölköző|gyertya|szobanövény|létra|mosogatógép|fogas|takaró|dugóhúzó|serpenyő|WC-papír|falióra|kilincs|szárítókötél|hokedli|éjjeliszekrény|hőmérő|fürdőszobamérleg|reszelő|befőttesüveg|lábtörlő|szúnyogháló|sótartó|kaparós szivacs",
+en:"vacuum cleaner|fridge|mirror|mattress|microwave|toothbrush|radiator|trash can|curtains|washing machine|couch|iron|light switch|rug|pajamas|hair dryer|pillow|spice rack|keychain|extension cord|kettle|bookshelf|shower head|alarm clock|shoehorn|power outlet|slippers|towel|candle|houseplant|ladder|dishwasher|coat hanger|blanket|corkscrew|frying pan|toilet paper|wall clock|doorknob|clothesline|stool|nightstand|thermometer|bathroom scale|cheese grater|mason jar|doormat|window screen|salt shaker|sponge"}},
+
+{id:"school",n:{hu:"Egyetem, suli",en:"School & uni"},w:{
+hu:"vizsgaidőszak|kollégium|jegyzet|büfé|ZH|előadás|gyakvezér|szorgalmi|diákigazolvány|könyvtár|laborgyakorlat|szakdolgozat|kredit|Neptun|utóvizsga|tankör|gólyatábor|tétel|házi feladat|padtárs|tanterem|szünet|évfolyamtárs|beadandó|osztályzat|puska|tanári|osztálykirándulás|érettségi|ösztöndíj|felvételi|tornaóra|menza|ellenőrző|csengő|projektor|katalógus|szigorlat|kiselőadás|szemeszter|szóbeli|dolgozat|szertár|iskolatáska|padsor",
+en:"exam period|dorm|lecture notes|cafeteria|pop quiz|lecture|teaching assistant|student ID|library|lab session|thesis|credits|retake exam|freshman week|homework|deskmate|classroom|break|classmate|assignment|grade|cheat sheet|staff room|field trip|graduation|scholarship|admissions|PE class|school lunch|report card|school bell|projector|attendance|group project|detention|principal|locker|whiteboard|semester|final exam|oral exam|backpack|hall pass|yearbook|school bus"}},
+
+{id:"body",n:{hu:"Testrészek",en:"Body parts"},w:{
+hu:"könyök|boka|fül|szemöldök|hüvelykujj|nyelv|térd|váll|borda|köröm|áll|tarkó|szempilla|sarok|csukló|orrlyuk|gerinc|tenyér|homlok|fogsor|térdkalács|vádli|szemfog|kisujj|halánték|bicepsz|köldök|torok|kulcscsont|orrcimpa|szemgolyó|nyak|comb|hónalj|állkapocs|bőr|máj|szív|tüdő|fülcimpa",
+en:"elbow|ankle|ear|eyebrow|thumb|tongue|knee|shoulder|rib|fingernail|chin|nape|eyelash|heel|wrist|nostril|spine|palm|forehead|teeth|kneecap|calf|canine tooth|pinky|temple|bicep|belly button|throat|collarbone|eyeball|neck|thigh|armpit|jaw|skin|liver|heart|lungs|hip|earlobe"}},
+
+{id:"nature",n:{hu:"Természet",en:"Nature"},w:{
+hu:"vulkán|szivárvány|sivatag|gleccser|erdő|villám|barlang|holdfogyatkozás|tenger|hóesés|köd|vízesés|mocsár|homokdűne|hurrikán|napfelkelte|forrás|kaktusz|korallzátony|árvíz|meteor|hőhullám|jégeső|gejzír|szél|tornádó|hold|napfogyatkozás|sarki fény|földrengés|tó|moha|lavina|szikla|patak|jéghegy|dzsungel|homok|csillagkép|mennydörgés|zuzmó|iszap|hófúvás|dagály",
+en:"volcano|rainbow|desert|glacier|forest|lightning|cave|lunar eclipse|ocean|snowfall|fog|waterfall|swamp|sand dune|hurricane|sunrise|spring|cactus|coral reef|flood|meteor|heatwave|hail|geyser|wind|tornado|the moon|solar eclipse|northern lights|earthquake|lake|moss|avalanche|cliff|stream|iceberg|jungle|sand|constellation|thunder|lichen|mud|blizzard|high tide"}},
+
+{id:"transport",n:{hu:"Közlekedés",en:"Getting around"},w:{
+hu:"metró|roller|hőlégballon|tandembicikli|helikopter|villamos|teherautó|komp|siklóernyő|gördeszka|éjszakai busz|taxi|vonat|motorcsónak|lift|mozgólépcső|libegő|hajó|repülőgép|görkorcsolya|traktor|tűzoltóautó|mentő|szánkó|léghajó|tengeralattjáró|rakéta|quad|kisvasút|trolibusz|kerékpár|lakókocsi|motor|jetski|szekér|kabinos felvonó|sífelvonó|gőzmozdony|riksa|kenu",
+en:"subway|scooter|hot air balloon|tandem bike|helicopter|tram|truck|ferry|paraglider|skateboard|night bus|taxi|train|speedboat|elevator|escalator|cable car|ship|airplane|roller skates|tractor|fire truck|ambulance|sled|blimp|submarine|rocket|quad bike|trolleybus|bicycle|caravan|motorcycle|jet ski|horse cart|ski lift|steam train|golf cart|rickshaw|canoe|monorail"}},
+
+{id:"game",n:{hu:"Videojátékok",en:"Video games"},w:{
+hu:"Minecraft|Fortnite|GTA|FIFA|Among Us|Tetris|Counter-Strike|Mario|The Sims|Pokémon|Zelda|Rocket League|Call of Duty|No Man's Sky|Roblox|Elden Ring|Angry Birds|League of Legends|Subway Surfers|Valorant|Overwatch|Candy Crush|Pac-Man|Doom|Half-Life|Skyrim|Cyberpunk 2077|Stardew Valley|Terraria|Portal|Sonic|Tomb Raider|Assassin's Creed|Red Dead Redemption|Clash Royale|Geometry Dash|Fall Guys|Hollow Knight|Dark Souls|Need for Speed",
+en:"Minecraft|Fortnite|GTA|FIFA|Among Us|Tetris|Counter-Strike|Mario|The Sims|Pokémon|Zelda|Rocket League|Call of Duty|No Man's Sky|Roblox|Elden Ring|Angry Birds|League of Legends|Subway Surfers|Valorant|Overwatch|Candy Crush|Pac-Man|Doom|Half-Life|Skyrim|Cyberpunk 2077|Stardew Valley|Terraria|Portal|Sonic|Tomb Raider|Assassin's Creed|Red Dead Redemption|Clash Royale|Geometry Dash|Fall Guys|Hollow Knight|Dark Souls|Need for Speed"}},
+
+{id:"budapest",n:{hu:"Budapest",en:null},w:{
+hu:"Lánchíd|Gellért-hegy|Széchenyi fürdő|Margitsziget|Nyugati pályaudvar|Hősök tere|Deák tér|Bazilika|Kelenföld|Normafa|Parlament|Városliget|Nagykörút|Csepel|Fény utcai piac|Kopaszi-gát|Duna-part|Móricz Zsigmond körtér|4-es metró|BME|Bem rakpart|Óbudai-sziget|Blaha|Római-part|Erzsébet híd|Corvin|Halászbástya|Astoria|Vörösmarty tér|Nagyvásárcsarnok|Sas-hegy|Rákóczi tér|Széll Kálmán tér|Népliget|Hűvösvölgy|Gozsdu udvar|Keleti pályaudvar|Városmajor|Szabadság híd|Zugló",en:null}},
+
+{id:"brand",n:{hu:"Márkák",en:"Brands"},w:{
+hu:"Nike|IKEA|Coca-Cola|Apple|Lego|Adidas|Tesla|Spotify|McDonald's|Lidl|Samsung|Netflix|Ferrari|Rubik-kocka|Zara|BMW|Nutella|Sony|Decathlon|Rossmann|Amazon|Google|Nintendo|Red Bull|Gucci|H&M|Pepsi|Starbucks|Uber|PlayStation|Michelin|Heineken|Toyota|Instagram|TikTok|Canon|Bosch|Ray-Ban|Converse|Wizz Air|Túró Rudi|MOL|OTP",
+en:"Nike|IKEA|Coca-Cola|Apple|Lego|Adidas|Tesla|Spotify|McDonald's|Samsung|Netflix|Ferrari|Rubik's Cube|Zara|BMW|Nutella|Sony|Amazon|Google|Nintendo|Red Bull|Gucci|H&M|Pepsi|Starbucks|Uber|PlayStation|Michelin|Heineken|Toyota|Instagram|TikTok|Canon|Bosch|Ray-Ban|Converse|Airbnb|Lululemon|Dyson|Rolex|Duolingo|Sharpie|Post-it|WD-40"}},
+
+{id:"awkward",n:{hu:"Kínos helyzetek",en:"Awkward moments"},w:{
+hu:"elesni a lépcsőn|rossz névvel köszönni|hangosan felnevetni temetésen|integetni valakinek, aki nem neked int|spenót a fogadon|telefon csörög moziban|elfelejteni a wifi jelszót|véletlen szívecske egy régi posztra|fals hang karaokén|idegent megölelni|bekapcsolva maradt mikrofon|kimondani hangosan a gondolatot|rossz csoportba írni|kávé a fehér pólón|elaludni előadáson|kopogás nélkül benyitni|túl korán tapsolni|anyának szólítani a tanárt|rossz emojit küldeni|hangosan korgó gyomor|ugyanabba az irányba lépni kétszer|becsukott szemmel készült fotó|elfelejteni valaki nevét|húzni a tolós ajtót|beszélni, amikor más is kezd|szelfi elülső kamerával véletlenül|köszönni a szomszédnak, aki nem hallja|üres kávéskannát visszatenni|hangüzenet, amit nem lehet visszavonni|autokorrekt által elrontott üzenet",
+en:"tripping on the stairs|calling someone the wrong name|laughing at a funeral|waving at someone who wasn't waving at you|spinach in your teeth|phone ringing in a cinema|forgetting the wifi password|liking an old post by accident|missing the note at karaoke|hugging a stranger|leaving your mic on|saying the quiet part out loud|texting the wrong group chat|coffee on a white shirt|falling asleep in a lecture|walking in without knocking|clapping too early|calling your teacher mom|sending the wrong emoji|your stomach growling loudly|both stepping the same way|blinking in every photo|forgetting someone's name|pushing a pull door|talking at the same time|accidental front camera selfie|putting back an empty coffee pot|a voice note you can't unsend|autocorrect ruining a text|replying all"}},
+
+{id:"toon",n:{hu:"Mesefigurák, hősök",en:"Cartoon & comic heroes"},w:{
+hu:"Batman|Süsü|Vuk|Pókember|Hupikék törpikék|SpongyaBob|Mickey egér|Vasember|Mekk Elek|Superman|Elsa|Pikachu|Garfield|Kacsamesék|Pom Pom|Hulk|Shrek|Frakk|Scooby-Doo|Deadpool|Tom és Jerry|Bob, a mester|Csizmás kandúr|Micimackó|Hamupipőke|Aladdin|Homer Simpson|Donald kacsa|Nemo|Simba|Rozsomák|Ariel|Pinokkió|Kung Fu Panda|Tapsi Hapsi|Popeye|Peppa malac|Amerika Kapitány|Thor|Vili, a veréb",
+en:"Batman|Spider-Man|Smurfs|SpongeBob|Mickey Mouse|Iron Man|Superman|Elsa|Pikachu|Garfield|DuckTales|Hulk|Shrek|Scooby-Doo|Deadpool|Tom and Jerry|Bob the Builder|Puss in Boots|Winnie the Pooh|Cinderella|Aladdin|Homer Simpson|Donald Duck|Nemo|Simba|Wolverine|Ariel|Pinocchio|Kung Fu Panda|Bugs Bunny|Popeye|Peppa Pig|Captain America|Thor|Woody|Buzz Lightyear|Wonder Woman|Sonic|Barbie|Charlie Brown"}},
+
+{id:"tech",n:{hu:"Technológia",en:"Tech"},w:{
+hu:"wifi|QR-kód|drón|bluetooth|kriptovaluta|felhő|chatbot|VR-szemüveg|napelem|3D-nyomtató|okosóra|jelszókezelő|adatvesztés|szerver|akkumulátor|hangfelismerés|router újraindítása|kékhalál|emoji|képernyőkép|kétlépcsős azonosítás|reklámblokkoló|spam|frissítés|villámtöltő|felhőmentés|nyílt forráskód|algoritmus|hőtérkép|arcfelismerés|billentyűzet|pixel|vírusirtó|lemerült telefon|inkognitó mód|széles sávú net|hangposta|sötét mód",
+en:"wifi|QR code|drone|bluetooth|cryptocurrency|the cloud|chatbot|VR headset|solar panel|3D printer|smartwatch|password manager|data loss|server|battery|voice recognition|restarting the router|blue screen|emoji|screenshot|two-factor auth|ad blocker|spam|software update|fast charger|cloud backup|open source|algorithm|heat map|face unlock|keyboard|pixel|antivirus|dead phone battery|incognito mode|broadband|voicemail|dark mode"}},
+
+{id:"holiday",n:{hu:"Ünnepek, alkalmak",en:"Holidays & occasions"},w:{
+hu:"szilveszter|szülinap|húsvéti locsolkodás|ballagás|farsang|halloween|adventi naptár|esküvő|névnap|majális|mikulás|szalagavató|karácsonyfa|tűzijáték|szüreti mulatság|anyák napja|valentin-nap|gólyabál|jelmezbál|hálaadás|keresztelő|költözési buli|évforduló|nyugdíjas búcsúztató|karácsonyi vacsora|augusztus 20|március 15|babaváró|sportnap|osztálytalálkozó",
+en:"New Year's Eve|birthday|Easter|graduation|carnival|Halloween|advent calendar|wedding|name day|May Day|Santa Claus|prom|Christmas tree|fireworks|harvest festival|Mother's Day|Valentine's Day|freshman ball|costume party|Thanksgiving|christening|housewarming|anniversary|retirement party|Christmas dinner|Fourth of July|baby shower|sports day|class reunion|Black Friday"}},
+
+{id:"clothes",n:{hu:"Ruhák",en:"Clothes"},w:{
+hu:"kapucnis pulcsi|farmer|zokni|sál|bakancs|fürdőruha|nyakkendő|napszemüveg|kesztyű|esőkabát|papucs|baseballsapka|bőrdzseki|szoknya|öv|melegítő|kardigán|csizma|kalap|zsebkendő|bikini|blúz|mellény|harisnya|overall|hálóing|kötött sapka|edzőcipő|inggomb|tornacipő|kabát|zsebes nadrág|smoking|fürdőköpeny|hajgumi",
+en:"hoodie|jeans|socks|scarf|boots|swimsuit|tie|sunglasses|gloves|raincoat|flip-flops|baseball cap|leather jacket|skirt|belt|sweatpants|cardigan|hat|handkerchief|bikini|blouse|vest|tights|overalls|nightgown|beanie|sneakers|shirt button|coat|cargo pants|tuxedo|bathrobe|hair tie|apron|mittens"}},
+
+{id:"history",n:{hu:"Történelmi alakok",en:"Historical figures"},w:{
+hu:"Napóleon|Kleopátra|Einstein|Julius Caesar|Marie Curie|Gandhi|Kolumbusz|Leonardo da Vinci|Sissi|Mozart|Vlagyimir Lenin|Jeanne d'Arc|Nagy Sándor|Tutanhamon|Beethoven|Shakespeare|Galilei|Kennedy|Petőfi Sándor|Mátyás király|Kossuth Lajos|Nikola Tesla|Churchill|Van Gogh|Darwin|Marco Polo|Attila|Michelangelo|Freud|Nefertiti|Mária Terézia|Newton|Hunyadi János|Puskás Ferenc",
+en:"Napoleon|Cleopatra|Einstein|Julius Caesar|Marie Curie|Gandhi|Columbus|Leonardo da Vinci|Mozart|Joan of Arc|Alexander the Great|Tutankhamun|Beethoven|Shakespeare|Galileo|JFK|Nikola Tesla|Churchill|Van Gogh|Darwin|Marco Polo|Attila the Hun|Michelangelo|Freud|Nefertiti|Newton|Genghis Khan|Abraham Lincoln|Amelia Earhart|Rosa Parks|Martin Luther King|Queen Victoria|Socrates|Houdini|Neil Armstrong"}},
+
+{id:"places",n:{hu:"Hova mész",en:"Places you go"},w:{
+hu:"kórház|mozi|repülőtér|könyvtár|állatkert|uszoda|benzinkút|piac|fogorvosi rendelő|edzőterem|temető|múzeum|kocsma|bevásárlóközpont|posta|autómosó|strand|fodrászat|vasútállomás|templom|börtön|kemping|hullámvasút|drogéria|szerviz|kávézó|éjszakai klub|okmányiroda|tetováló szalon|barlangfürdő|síterep|parkolóház|iroda|színház|állatorvos",
+en:"hospital|cinema|airport|library|zoo|swimming pool|gas station|farmers market|dentist's office|gym|cemetery|museum|pub|shopping mall|post office|car wash|beach|hair salon|train station|church|prison|campsite|roller coaster|pharmacy|repair shop|coffee shop|nightclub|DMV|tattoo parlor|spa|ski resort|parking garage|office|theatre|vet clinic"}}
+];
+
+/* ============== NYOMOK / CLUES ==============
+   Minden szó egy tág csoportba tartozik. A kém ezt kapja meg:
+   szűkít, de nem lövi le a szót.                              */
+const CLUES = {
+hu:{
+ food:{
+  "leves":"gulyás|halászlé|csirkeleves|meggyleves",
+  "édesség":"palacsinta|bejgli|fagylalt|krémes|tejbegríz|somlói galuska|rétes|kürtőskalács|mákos guba|zserbó|gesztenyepüré|túró rudi",
+  "reggeli":"tojásrántotta|müzli|croissant|tükörtojás|szendvics",
+  "gyorskaja":"pizza|lángos|hamburger|kebab|hot dog|sajtburger|gyros|sült krumpli|popcorn|tortilla",
+  "húsétel":"rántott hús|kolbász|pörkölt|virsli|töltött káposzta",
+  "tésztás":"lasagne|spagetti|túrós csusza|nokedli|gombóc",
+  "hidegen is jó":"sushi|körözött|savanyú káposzta|zsíros kenyér|pogácsa",
+  "krumplis vagy zöldséges":"rakott krumpli|paprikás krumpli|lecsó"},
+ drink:{
+  "kávéféle":"kávé|jeges kávé|tejeskávé|kapucsínó|latte|eszpresszó",
+  "alkoholos":"fröccs|pálinka|sör|forralt bor|koktél|pezsgő|whisky|mojito|rum|vörösbor|fehér bor|unicum",
+  "forrón isszák":"kakaó|tea|zöld tea|gyömbértea",
+  "gyümölcsös":"limonádé|narancslé|málnaszörp|meggylé|paradicsomlé|almalé|bambi|jeges tea",
+  "tejes":"kefir|turmix|tejturmix",
+  "szénsavas vagy víz":"szódavíz|ásványvíz|csapvíz|kóla|gyömbérsör|energiaital|kombucha"},
+ animal:{
+  "vízben él":"polip|cápa|delfin|bálna|teknős|homár|béka",
+  "apró és sok lába van":"szúnyog|hangya|méhecske|pók|skorpió|szitakötő|tücsök",
+  "madár":"pingvin|bagoly|papagáj|strucc|galamb|flamingó|sas|kacsa",
+  "ragadozó":"krokodil|gepárd|farkas|medve|oroszlán|kígyó|hiúz",
+  "erdei":"sün|borz|mókus|nyúl|róka|vakond|szarvas|vaddisznó",
+  "messziről jött":"elefánt|zsiráf|láma|kaméleon|koala|lajhár|pávián|hangyász",
+  "se nem ragadozó, se nem madár":"denevér|hörcsög|pillangó|csiga|birka"},
+ geo:{
+  "magyar város":"Debrecen|Szeged|Pécs|Miskolc|Szentendre",
+  "európai város":"Prága|Bécs|Velence|Isztambul|Barcelona|Berlin|Milánó|Amszterdam|Lisszabon|Krakkó|Párizs|London|Róma",
+  "európai ország":"Izland|Norvégia|Görögország|Svájc|Skócia|Finnország|Szlovákia|Horvátország|Írország|Hollandia|Portugália",
+  "tengerentúli város":"New York|Tokió|Las Vegas|Sydney|Dubaj",
+  "távoli ország":"Japán|Brazília|Egyiptom|Ausztrália|Kanada|Marokkó|India|Mexikó|Kuba|Kína|Peru|Törökország|Vietnám",
+  "sziget vagy tájegység":"Bali|Alaszka|Hawaii"},
+ sport:{
+  "labda kell hozzá":"kosárlabda|kézilabda|tenisz|golf|vízilabda|rögbi|foci|tollaslabda|röplabda|krikett|baseball|asztalitenisz",
+  "vízben":"úszás|kajak|szörf|evezés|búvárkodás",
+  "télen":"síelés|curling|snowboard|jégkorong|műkorcsolya",
+  "küzdősport":"vívás|box|karate|birkózás|szumó",
+  "sokáig tart":"futás|maraton|biciklizés|triatlon|atlétika",
+  "erő és technika":"torna|súlyemelés|gerelyhajítás|rúdugrás|falmászás|hegymászás|íjászat",
+  "inkább hobbi":"sakk|jóga|teke|darts|lovaglás|gördeszkázás"},
+ job:{
+  "egészségügy":"fogorvos|állatorvos|gyógyszerész|sebész|pszichológus|szemész",
+  "egyenruhát hord":"tűzoltó|rendőr|katona|portás|éjjeliőr",
+  "kétkezi munka":"asztalos|villanyszerelő|kertész|vízvezeték-szerelő|takarító|szemetes|hentes",
+  "étel körül forog":"séf|pék|pincér|halász",
+  "íróasztalnál ül":"könyvelő|ügyvéd|bíró|tolmács|programozó",
+  "kreatív szakma":"zenész|szinkronszínész|bűvész|festő|díszlettervező|kaszkadőr|influenszer|dokumentumfilmes",
+  "emberekkel dolgozik":"tanár|könyvtáros|fodrász|dadus|idegenvezető|edző|újságíró",
+  "úton vagy szabadban":"pilóta|postás|taxisofőr|matróz|farmer|régész|meteorológus|építész"},
+ house:{
+  "konyhában":"mikró|teáskanna|serpenyő|dugóhúzó|fűszertartó|reszelő|befőttesüveg|sótartó|kaparós szivacs|hűtő|mosogatógép",
+  "fürdőszobában":"fogkefe|zuhanyfej|törölköző|WC-papír|fürdőszobamérleg|hajszárító",
+  "hálószobában":"matrac|párna|takaró|pizsama|ébresztőóra|éjjeliszekrény|papucs",
+  "nagy gép":"porszívó|mosógép|vasaló",
+  "bútor":"kanapé|könyvespolc|hokedli|fogas|szőnyeg",
+  "falon vagy árammal":"villanykapcsoló|konnektor|hosszabbító|radiátor|falióra|kilincs",
+  "ajtó és ablak körül":"függöny|lábtörlő|szúnyogháló|szárítókötél|cipőkanál",
+  "dísz vagy vegyes":"tükör|gyertya|szobanövény|létra|szemeteskuka|kulcstartó|hőmérő"},
+ nature:{
+  "az égen":"holdfogyatkozás|meteor|hold|napfogyatkozás|sarki fény|csillagkép|napfelkelte|szivárvány",
+  "vihar":"villám|hurrikán|jégeső|szél|tornádó|mennydörgés|hófúvás",
+  "víz":"tenger|vízesés|forrás|tó|patak|dagály|árvíz|mocsár|iszap",
+  "hideg":"gleccser|hóesés|lavina|jéghegy|köd",
+  "meleg és száraz":"sivatag|homokdűne|kaktusz|hőhullám|homok",
+  "kő vagy a föld mélye":"vulkán|gejzír|földrengés|barlang|szikla",
+  "növényzet":"erdő|dzsungel|moha|zuzmó|korallzátony"},
+ transport:{
+  "vízen":"komp|motorcsónak|hajó|tengeralattjáró|jetski|kenu",
+  "levegőben":"hőlégballon|helikopter|siklóernyő|repülőgép|léghajó|rakéta",
+  "sínen":"metró|villamos|vonat|kisvasút|gőzmozdony",
+  "közúti jármű":"teherautó|éjszakai busz|taxi|tűzoltóautó|mentő|lakókocsi|traktor|trolibusz|quad",
+  "két kereke van":"roller|tandembicikli|kerékpár|motor",
+  "tolják vagy húzzák":"gördeszka|görkorcsolya|szánkó|szekér|riksa",
+  "felvisz valahova":"lift|mozgólépcső|libegő|kabinos felvonó|sífelvonó"},
+ clothes:{
+  "lábon":"zokni|bakancs|papucs|csizma|edzőcipő|tornacipő",
+  "fejen":"napszemüveg|baseballsapka|kalap|kötött sapka",
+  "felsőtesten":"kapucnis pulcsi|bőrdzseki|kardigán|blúz|mellény|kabát",
+  "derék alatt":"farmer|szoknya|melegítő|zsebes nadrág",
+  "kiegészítő":"sál|nyakkendő|kesztyű|öv|hajgumi|zsebkendő|inggomb",
+  "víz vagy eső":"fürdőruha|bikini|esőkabát",
+  "otthon vagy alkalmi":"hálóing|fürdőköpeny|overall|harisnya|smoking"},
+ places:{
+  "egészség":"kórház|fogorvosi rendelő|állatorvos|drogéria",
+  "kultúra":"mozi|könyvtár|múzeum|színház|templom",
+  "sport vagy víz":"uszoda|edzőterem|strand|barlangfürdő|síterep",
+  "utazás":"repülőtér|vasútállomás|kemping|parkolóház|benzinkút",
+  "vásárlás":"piac|bevásárlóközpont|posta",
+  "szórakozás":"kocsma|kávézó|éjszakai klub|hullámvasút|állatkert",
+  "hivatalos vagy komoly":"okmányiroda|iroda|börtön|temető",
+  "szolgáltatás":"autómosó|fodrászat|szerviz|tetováló szalon"},
+ movie:{
+  "nem élőszereplős":"Shrek|L'ecsó|Coco|Az oroszlánkirály|Gru|Toy Story|Jégvarázs|Némó nyomában",
+  "képregényhős":"Bosszúállók|Pókember|Joker|Vasember|Batman|A Sötét Lovag",
+  "űr vagy jövő":"Mátrix|Csillagok háborúja|Csillagok között|Terminátor|E.T.|A nyolcadik utas|Avatar|Mad Max",
+  "ijesztő":"Ragyogás|Cápa|Sikoly|A bárányok hallgatnak|Hetedik",
+  "nevetni lehet rajta":"Csupasz pisztoly|Amerikai pite|Reszkessetek, betörők|Másnaposok|Különben dühbe jövünk|Üvegtigris|Valami Amerika|Ace Ventura",
+  "szerelem vagy tánc":"Titanic|Mamma Mia|Piszkos tánc|Az ördög Pradát visel|Micsoda nő!",
+  "kalandfilm":"Jurassic Park|Vissza a jövőbe|A Gyűrűk Ura|Harry Potter|Karib-tenger kalózai|Indiana Jones|A múmia",
+  "verekedős":"Kill Bill|Harcosok klubja|Halálos iramban|Rambo|Rocky|Gladiátor",
+  "bűnözőkről szól":"A keresztapa|Trainspotting|Ponyvaregény|A remény rabjai|Kontroll",
+  "elgondolkodtató":"Eredet|Barbie|Oppenheimer|Forrest Gump|A Zöld Mérföld|A Pál utcai fiúk"},
+ show:{
+  "rajzfilm":"Simpson család|Rick és Morty|Family Guy|Süsü|SpongyaBob|South Park|Avatar – Aang legendája",
+  "vígjáték":"Jóbarátok|Agymenők|Ted Lasso|A hivatal",
+  "bűnügyi":"Kobra 11|Breaking Bad|Peaky Blinders|Narcos|A nagy pénzrablás|Sons of Anarchy|Better Call Saul|A Mentalista|Sherlock",
+  "sci-fi vagy fantasy":"Trónok harca|Stranger Things|Dark|Fekete tükör|Lost|The Last of Us|Vaják|A mandalóri|Alkonyzóna",
+  "szerelem és intrika":"Szex és New York|Bridgerton|A korona|Barátok közt|Jóban Rosszban",
+  "komoly vagy sötét hangvételű":"Vészhelyzet|Doktor House|Csernobil|Wednesday|Mr. Robot|Squid Game"},
+ huartist:{
+  "rap vagy hip-hop":"Beton.Hofi|Krúbi|T. Danny|Desh|Bëlga|Majka|Fluor Tomi|Ganxsta Zolee|Punnany Massif",
+  "mostanában futott fel":"Manuel|Dzsúdló|Azahriah|Carson Coma|Lóci játszik|Follow The Flow",
+  "rockzenekar":"Tankcsapda|Ossian|Quimby|Kispál és a Borz|30Y|Hooligans|Zaporozsec",
+  "régi klasszikus":"Republic|Ákos|LGT|Bródy János|Omega|Neoton Família|Illés",
+  "popos vagy női énekes":"Rúzsa Magdi|Margaret Island|Blahalouisiana|Wellhello|Anna and the Barbies",
+  "egyedi hangzás":"Halott Pénz|Bagossy Brothers|Szabó Balázs Bandája|Elefánt|Csík zenekar"},
+ artist:{
+  "rapper":"Drake|Eminem|Travis Scott|Kanye West|Juice WRLD|Don Toliver|Kendrick Lamar|Snoop Dogg|Post Malone|Jay-Z",
+  "zenekar":"The Beatles|Queen|Nirvana|ABBA|Metallica|Pink Floyd|AC/DC|Radiohead|Linkin Park|Coldplay|Daft Punk",
+  "női popsztár":"Beyoncé|Adele|Taylor Swift|Rihanna|Billie Eilish|Dua Lipa|Lady Gaga|Ariana Grande|Madonna|SZA|Lana Del Rey|Doja Cat",
+  "férfi énekes egyedül":"Michael Jackson|Ed Sheeran|Bruno Mars|The Weeknd|Bob Marley|Elvis Presley|Frank Ocean"},
+ instr:{
+  "fújni kell":"fuvola|szájharmonika|trombita|tuba|furulya|szaxofon|klarinét|kürt|duda|okarina|didgeridoo",
+  "húr van rajta":"hegedű|gitár|cselló|basszusgitár|hárfa|nagybőgő|ukulele|bendzsó|elektromos gitár|cimbalom",
+  "ütni kell":"dob|xilofon|triangulum|csörgődob|gong|marimba|üstdob|kolomp",
+  "billentyűs":"zongora|orgona|harmonika|tangóharmonika|szintetizátor|csembaló",
+  "nem is igazi hangszer":"dobgép|mikrofon|metronóm"},
+ body:{
+  "a fejeden van":"fül|szemöldök|áll|szempilla|orrlyuk|homlok|fogsor|szemfog|halánték|orrcimpa|szemgolyó|állkapocs|fülcimpa|nyelv",
+  "a karodon vagy a kezeden":"könyök|hüvelykujj|köröm|csukló|tenyér|kisujj|bicepsz|hónalj",
+  "a lábadon":"boka|térd|sarok|térdkalács|vádli|comb",
+  "a törzseden":"váll|borda|tarkó|gerinc|köldök|kulcscsont|nyak",
+  "szerv vagy szövet":"torok|máj|szív|tüdő|bőr"},
+ school:{
+  "számonkérés":"vizsgaidőszak|ZH|utóvizsga|tétel|érettségi|felvételi|szigorlat|szóbeli|dolgozat|osztályzat|puska",
+  "be kell adni":"szakdolgozat|házi feladat|beadandó|kiselőadás|jegyzet|szorgalmi",
+  "hely az épületben":"kollégium|büfé|könyvtár|tanterem|menza|tanári|szertár|padsor",
+  "ember vagy csoport":"gyakvezér|padtárs|évfolyamtárs|tankör|gólyatábor",
+  "papírmunka":"diákigazolvány|kredit|Neptun|ellenőrző|katalógus|ösztöndíj|szemeszter",
+  "óra vagy program":"előadás|laborgyakorlat|szünet|osztálykirándulás|tornaóra",
+  "tárgy":"csengő|projektor|iskolatáska"},
+ game:{
+  "lövöldözős":"Counter-Strike|Call of Duty|Valorant|Overwatch|Doom|Half-Life|Fortnite",
+  "építeni vagy gyűjteni lehet benne":"Minecraft|The Sims|Roblox|Stardew Valley|Terraria|No Man's Sky",
+  "nehéz és sokszor meghalsz":"Elden Ring|Dark Souls|Hollow Knight",
+  "telefonon szokás játszani":"Angry Birds|Subway Surfers|Candy Crush|Clash Royale|Geometry Dash|Among Us",
+  "régi klasszikus":"Tetris|Mario|Pac-Man|Sonic|Pokémon",
+  "verseny vagy sport":"FIFA|Rocket League|Need for Speed|Fall Guys|League of Legends",
+  "kalandozós":"Zelda|Portal|Tomb Raider|Assassin's Creed|Red Dead Redemption|GTA|Skyrim|Cyberpunk 2077"},
+ budapest:{
+  "híd vagy rakpart":"Lánchíd|Erzsébet híd|Szabadság híd|Bem rakpart|Duna-part",
+  "tér":"Hősök tere|Deák tér|Móricz Zsigmond körtér|Blaha|Vörösmarty tér|Rákóczi tér|Széll Kálmán tér|Astoria",
+  "zöld terület vagy domb":"Gellért-hegy|Margitsziget|Normafa|Városliget|Kopaszi-gát|Sas-hegy|Népliget|Hűvösvölgy|Városmajor|Római-part|Óbudai-sziget",
+  "épület vagy látványosság":"Bazilika|Parlament|Halászbástya|Széchenyi fürdő|Nagyvásárcsarnok|Gozsdu udvar|Fény utcai piac|BME",
+  "közlekedés":"Nyugati pályaudvar|Keleti pályaudvar|4-es metró|Nagykörút",
+  "kerület vagy városrész":"Kelenföld|Csepel|Zugló|Corvin"},
+ brand:{
+  "ruha vagy cipő":"Nike|Adidas|Zara|Gucci|H&M|Converse|Ray-Ban",
+  "kaja vagy ital":"Coca-Cola|McDonald's|Nutella|Red Bull|Pepsi|Starbucks|Heineken|Túró Rudi",
+  "autó vagy közlekedés":"Tesla|Ferrari|BMW|Michelin|Toyota|Uber|Wizz Air|MOL",
+  "kütyü vagy játék":"Apple|Samsung|Sony|Canon|Bosch|PlayStation|Nintendo|Lego|Rubik-kocka",
+  "app vagy weboldal":"Spotify|Netflix|Amazon|Google|Instagram|TikTok|OTP",
+  "bolt":"IKEA|Rossmann|Lidl|Decathlon"},
+ toon:{
+  "szuperhős":"Batman|Pókember|Vasember|Superman|Hulk|Deadpool|Rozsomák|Amerika Kapitány|Thor",
+  "magyar rajzfilm":"Süsü|Vuk|Mekk Elek|Pom Pom|Frakk|Vili, a veréb",
+  "Disney":"Elsa|Hamupipőke|Aladdin|Nemo|Simba|Ariel|Pinokkió|Mickey egér|Donald kacsa",
+  "állat a főszereplő":"Garfield|Tom és Jerry|Csizmás kandúr|Micimackó|Kung Fu Panda|Tapsi Hapsi|Peppa malac|Scooby-Doo|Pikachu|Kacsamesék",
+  "tévésorozatból ismerős":"SpongyaBob|Homer Simpson|Bob, a mester|Popeye|Shrek|Hupikék törpikék"},
+ tech:{
+  "meg tudod fogni":"drón|VR-szemüveg|napelem|3D-nyomtató|okosóra|akkumulátor|billentyűzet|szerver|villámtöltő",
+  "biztonság":"jelszókezelő|kétlépcsős azonosítás|vírusirtó|arcfelismerés|inkognitó mód|reklámblokkoló",
+  "amikor valami elromlik":"adatvesztés|kékhalál|spam|lemerült telefon|router újraindítása|frissítés",
+  "a képernyőn látod":"emoji|képernyőkép|sötét mód|pixel|hőtérkép",
+  "kapcsolat vagy hálózat":"wifi|bluetooth|széles sávú net|QR-kód|hangposta",
+  "szoftver vagy fogalom":"kriptovaluta|felhő|chatbot|hangfelismerés|felhőmentés|nyílt forráskód|algoritmus"},
+ holiday:{
+  "télen van":"szilveszter|adventi naptár|mikulás|karácsonyfa|karácsonyi vacsora|farsang|jelmezbál",
+  "iskolához köthető":"ballagás|szalagavató|gólyabál|sportnap|osztálytalálkozó",
+  "családi esemény":"esküvő|keresztelő|babaváró|évforduló|nyugdíjas búcsúztató|költözési buli|szülinap|névnap",
+  "ünnepnap vagy nagy dátum":"augusztus 20|március 15|hálaadás|halloween|majális|húsvéti locsolkodás|valentin-nap|anyák napja|szüreti mulatság|tűzijáték"},
+ history:{
+  "tudós":"Einstein|Marie Curie|Galilei|Nikola Tesla|Darwin|Freud|Newton",
+  "művész":"Leonardo da Vinci|Mozart|Beethoven|Shakespeare|Van Gogh|Michelangelo",
+  "magyar":"Petőfi Sándor|Mátyás király|Kossuth Lajos|Hunyadi János|Puskás Ferenc",
+  "uralkodó":"Kleopátra|Sissi|Nagy Sándor|Tutanhamon|Nefertiti|Mária Terézia|Julius Caesar",
+  "hadvezér, politikus vagy felfedező":"Napóleon|Gandhi|Vlagyimir Lenin|Kennedy|Churchill|Attila|Jeanne d'Arc|Kolumbusz|Marco Polo"}
+},
+en:{
+ food:{
+  "soup or stew":"goulash|chicken soup|clam chowder|beef stew",
+  "sweet":"pancakes|apple pie|ice cream|cheesecake|rice pudding|strudel|churros|waffles|donut|banana bread",
+  "breakfast":"scrambled eggs|croissant|omelette|granola",
+  "fast food":"pizza|burger|hot dog|kebab|french fries|cheeseburger|gyros|popcorn|nachos|tortilla|burrito",
+  "meat":"fried chicken|meatballs|sausage|steak|stuffed peppers|fish and chips",
+  "pasta or rice":"lasagna|spaghetti|mac and cheese|dumplings|ramen|pad thai|risotto|fried rice|paella|sushi",
+  "bread or potato":"mashed potatoes|sandwich|toast|bagel|pretzel"},
+ drink:{
+  "coffee":"coffee|iced coffee|latte|cappuccino|espresso",
+  "alcoholic":"spritzer|whiskey|beer|mulled wine|cocktail|champagne|mojito|rum|red wine|white wine|gin and tonic",
+  "served hot":"hot chocolate|tea|green tea|matcha",
+  "fruity":"lemonade|orange juice|cherry juice|tomato juice|apple juice|iced tea|lemon water|coconut water",
+  "creamy":"milkshake|smoothie|protein shake|eggnog",
+  "fizzy or water":"soda water|sparkling water|tap water|cola|ginger beer|energy drink|kombucha|root beer"},
+ animal:{
+  "lives in water":"octopus|shark|dolphin|whale|turtle|lobster|frog",
+  "small with many legs":"mosquito|ant|bee|spider|scorpion|dragonfly|cricket",
+  "bird":"penguin|owl|parrot|ostrich|pigeon|flamingo|eagle|duck",
+  "predator":"crocodile|cheetah|wolf|bear|lion|snake|lynx",
+  "woodland":"hedgehog|badger|squirrel|rabbit|fox|mole|deer|wild boar",
+  "from far away":"elephant|giraffe|llama|chameleon|koala|sloth|baboon|anteater",
+  "neither predator nor bird":"bat|hamster|butterfly|snail|sheep"},
+ geo:{
+  "european city":"Prague|Vienna|Venice|Istanbul|Barcelona|Berlin|Milan|Amsterdam|Lisbon|Krakow|Paris|London|Rome|Budapest",
+  "european country":"Iceland|Norway|Greece|Switzerland|Scotland|Finland|Slovakia|Croatia|Ireland|Netherlands|Portugal",
+  "city overseas":"New York|Dubai|Tokyo|Las Vegas|Sydney|Seoul|Cape Town|Chicago|Buenos Aires",
+  "far-off country":"Japan|Brazil|Egypt|Australia|Canada|Morocco|India|Mexico|Cuba|China|Peru|Vietnam",
+  "island or region":"Bali|Texas|Alaska|Hawaii"},
+ sport:{
+  "played with a ball":"basketball|table tennis|handball|tennis|golf|water polo|rugby|soccer|badminton|volleyball|cricket|baseball|American football",
+  "in water":"swimming|kayaking|surfing|rowing|scuba diving",
+  "winter":"skiing|curling|snowboarding|ice hockey|figure skating",
+  "combat":"fencing|boxing|karate|wrestling|sumo",
+  "takes a long time":"running|marathon|cycling|triathlon|track and field",
+  "strength and technique":"gymnastics|weightlifting|javelin|pole vault|climbing|archery",
+  "more of a hobby":"chess|yoga|bowling|darts|horse riding|skateboarding"},
+ job:{
+  "healthcare":"dentist|vet|pharmacist|surgeon|psychologist|optician",
+  "wears a uniform":"firefighter|police officer|soldier|night guard|lifeguard",
+  "works with their hands":"carpenter|electrician|gardener|plumber|cleaner|garbage collector|butcher",
+  "around food":"chef|baker|waiter|fisherman",
+  "sits at a desk":"accountant|lawyer|judge|interpreter|programmer",
+  "creative":"musician|voice actor|magician|painter|set designer|stuntman|influencer|journalist",
+  "works with people":"teacher|librarian|hairdresser|babysitter|tour guide|coach|receptionist",
+  "outdoors or travelling":"pilot|mail carrier|taxi driver|sailor|farmer|archaeologist|weather forecaster|architect"},
+ house:{
+  "in the kitchen":"microwave|kettle|frying pan|corkscrew|spice rack|cheese grater|mason jar|salt shaker|sponge|fridge|dishwasher",
+  "in the bathroom":"toothbrush|shower head|towel|toilet paper|bathroom scale|hair dryer",
+  "in the bedroom":"mattress|pillow|blanket|pajamas|alarm clock|nightstand|slippers",
+  "big appliance":"vacuum cleaner|washing machine|iron",
+  "furniture":"couch|bookshelf|stool|coat hanger|rug",
+  "on the wall or plugged in":"light switch|power outlet|extension cord|radiator|wall clock|doorknob",
+  "around doors and windows":"curtains|doormat|window screen|clothesline|shoehorn",
+  "decor or other":"mirror|candle|houseplant|ladder|trash can|keychain|thermometer"},
+ nature:{
+  "in the sky":"lunar eclipse|meteor|the moon|solar eclipse|northern lights|constellation|sunrise|rainbow",
+  "storm":"lightning|hurricane|hail|wind|tornado|thunder|blizzard",
+  "water":"ocean|waterfall|spring|lake|stream|high tide|flood|swamp|mud",
+  "cold":"glacier|snowfall|avalanche|iceberg|fog",
+  "hot and dry":"desert|sand dune|cactus|heatwave|sand",
+  "rock or deep underground":"volcano|geyser|earthquake|cave|cliff",
+  "plants":"forest|jungle|moss|lichen|coral reef"},
+ transport:{
+  "on water":"ferry|speedboat|ship|submarine|jet ski|canoe",
+  "in the air":"hot air balloon|helicopter|paraglider|airplane|blimp|rocket",
+  "on rails":"subway|tram|train|steam train|monorail",
+  "road vehicle":"truck|night bus|taxi|fire truck|ambulance|caravan|tractor|trolleybus|quad bike|golf cart",
+  "has two wheels":"scooter|tandem bike|bicycle|motorcycle",
+  "pushed or pulled":"skateboard|roller skates|sled|horse cart|rickshaw",
+  "takes you up":"elevator|escalator|cable car|ski lift"},
+ clothes:{
+  "on your feet":"socks|boots|flip-flops|sneakers",
+  "on your head":"sunglasses|baseball cap|hat|beanie",
+  "upper body":"hoodie|leather jacket|cardigan|blouse|vest|coat",
+  "below the waist":"jeans|skirt|sweatpants|cargo pants",
+  "accessory":"scarf|tie|gloves|belt|hair tie|handkerchief|shirt button|mittens",
+  "water or rain":"swimsuit|bikini|raincoat",
+  "at home or formal":"nightgown|bathrobe|overalls|tights|tuxedo|apron"},
+ places:{
+  "health":"hospital|dentist's office|vet clinic|pharmacy",
+  "culture":"cinema|library|museum|theatre|church",
+  "sport or water":"swimming pool|gym|beach|spa|ski resort",
+  "travel":"airport|train station|campsite|parking garage|gas station",
+  "shopping":"farmers market|shopping mall|post office",
+  "going out":"pub|coffee shop|nightclub|roller coaster|zoo",
+  "official or serious":"DMV|office|prison|cemetery",
+  "a service":"car wash|hair salon|repair shop|tattoo parlor"},
+ movie:{
+  "animated":"Shrek|Ratatouille|Coco|The Lion King|Despicable Me|Toy Story|Frozen|Finding Nemo",
+  "comic book hero":"The Avengers|Spider-Man|Joker|Iron Man|Batman|The Dark Knight",
+  "space or the future":"The Matrix|Star Wars|Interstellar|The Terminator|E.T.|Alien|Avatar|Mad Max",
+  "scary":"The Shining|Jaws|Scream|The Silence of the Lambs|Se7en|Get Out",
+  "meant to be funny":"The Naked Gun|American Pie|Home Alone|The Hangover|Ace Ventura|Mean Girls|Groundhog Day",
+  "love or dancing":"Titanic|Mamma Mia|Dirty Dancing|The Devil Wears Prada|Pretty Woman|La La Land",
+  "adventure":"Jurassic Park|Back to the Future|The Lord of the Rings|Harry Potter|Pirates of the Caribbean|Indiana Jones|The Mummy",
+  "fighting":"Kill Bill|Fight Club|Fast and Furious|Rambo|Rocky|Gladiator",
+  "about criminals":"The Godfather|Trainspotting|Pulp Fiction|The Shawshank Redemption|Goodfellas",
+  "makes you think":"Inception|Barbie|Oppenheimer|Forrest Gump|The Green Mile"},
+ show:{
+  "animated":"The Simpsons|Rick and Morty|Family Guy|SpongeBob|South Park|Avatar: The Last Airbender",
+  "comedy":"Friends|The Office|Brooklyn Nine-Nine|The Big Bang Theory|Ted Lasso|Modern Family",
+  "crime":"Breaking Bad|Peaky Blinders|Narcos|Money Heist|Sons of Anarchy|Better Call Saul|Sherlock|Prison Break",
+  "sci-fi or fantasy":"Game of Thrones|Stranger Things|Dark|Black Mirror|Lost|The Last of Us|The Witcher|The Mandalorian|Severance",
+  "romance and scheming":"Sex and the City|Bridgerton|The Crown|Succession",
+  "dark or serious":"Chernobyl|Wednesday|Mr. Robot|Squid Game|House|Grey's Anatomy|The Boys"},
+ artist:{
+  "rapper":"Drake|Eminem|Travis Scott|Kanye West|Juice WRLD|Don Toliver|Kendrick Lamar|Snoop Dogg|Post Malone|Jay-Z",
+  "a band":"The Beatles|Queen|Nirvana|ABBA|Metallica|Pink Floyd|AC/DC|Radiohead|Linkin Park|Coldplay|Daft Punk",
+  "female pop star":"Beyoncé|Adele|Taylor Swift|Rihanna|Billie Eilish|Dua Lipa|Lady Gaga|Ariana Grande|Madonna|SZA|Lana Del Rey|Doja Cat",
+  "male solo singer":"Michael Jackson|Ed Sheeran|Bruno Mars|The Weeknd|Bob Marley|Elvis Presley|Frank Ocean"},
+ instr:{
+  "you blow into it":"flute|harmonica|trumpet|tuba|recorder|saxophone|clarinet|French horn|bagpipes|ocarina|didgeridoo|kazoo",
+  "it has strings":"violin|guitar|cello|bass guitar|harp|double bass|ukulele|banjo|electric guitar|sitar",
+  "you hit it":"drums|xylophone|triangle|tambourine|gong|marimba|timpani|cowbell",
+  "keyboard":"piano|organ|accordion|synthesizer|harpsichord",
+  "not really an instrument":"drum machine|microphone|metronome"},
+ body:{
+  "on your head":"ear|eyebrow|tongue|chin|eyelash|nostril|forehead|teeth|canine tooth|temple|eyeball|jaw|earlobe",
+  "on your arm or hand":"elbow|thumb|fingernail|wrist|palm|pinky|bicep|armpit",
+  "on your leg":"ankle|knee|heel|kneecap|calf|thigh",
+  "on your torso":"shoulder|rib|nape|spine|belly button|collarbone|neck|hip",
+  "organ or tissue":"throat|liver|heart|lungs|skin"},
+ school:{
+  "being tested":"exam period|pop quiz|retake exam|final exam|oral exam|admissions|grade|cheat sheet|report card",
+  "something to hand in":"thesis|homework|assignment|group project|lecture notes",
+  "a place in the building":"dorm|cafeteria|library|classroom|staff room|locker|whiteboard",
+  "a person or a group":"teaching assistant|deskmate|classmate|principal|freshman week",
+  "paperwork":"student ID|credits|scholarship|attendance|semester|hall pass|yearbook",
+  "a class or an event":"lecture|lab session|break|field trip|PE class|graduation|detention",
+  "an object":"school bell|projector|backpack|school bus|school lunch"},
+ game:{
+  "shooter":"Counter-Strike|Call of Duty|Valorant|Overwatch|Doom|Half-Life|Fortnite",
+  "you build or collect in it":"Minecraft|The Sims|Roblox|Stardew Valley|Terraria|No Man's Sky",
+  "hard and you die a lot":"Elden Ring|Dark Souls|Hollow Knight",
+  "usually played on a phone":"Angry Birds|Subway Surfers|Candy Crush|Clash Royale|Geometry Dash|Among Us",
+  "old classic":"Tetris|Mario|Pac-Man|Sonic|Pokémon",
+  "racing or sport":"FIFA|Rocket League|Need for Speed|Fall Guys|League of Legends",
+  "adventure":"Zelda|Portal|Tomb Raider|Assassin's Creed|Red Dead Redemption|GTA|Skyrim|Cyberpunk 2077"},
+ brand:{
+  "clothes or shoes":"Nike|Adidas|Zara|Gucci|H&M|Converse|Lululemon",
+  "food or drink":"Coca-Cola|McDonald's|Nutella|Red Bull|Pepsi|Starbucks|Heineken",
+  "cars or getting around":"Tesla|Ferrari|BMW|Michelin|Toyota|Uber",
+  "a gadget":"Apple|Samsung|Sony|Canon|Bosch|PlayStation|Nintendo|Dyson|Rolex",
+  "an app or a website":"Spotify|Netflix|Amazon|Google|Instagram|TikTok|Duolingo|Airbnb",
+  "on a desk or in a drawer":"Lego|Rubik's Cube|Ray-Ban|Sharpie|Post-it|WD-40|IKEA"},
+ toon:{
+  "superhero":"Batman|Spider-Man|Iron Man|Superman|Hulk|Deadpool|Wolverine|Captain America|Thor|Wonder Woman",
+  "Disney":"Elsa|Cinderella|Aladdin|Nemo|Simba|Ariel|Pinocchio|Mickey Mouse|Donald Duck",
+  "an animal is the main character":"Garfield|Tom and Jerry|Puss in Boots|Winnie the Pooh|Kung Fu Panda|Bugs Bunny|Peppa Pig|Scooby-Doo|Pikachu|DuckTales",
+  "from a TV series":"SpongeBob|Homer Simpson|Bob the Builder|Popeye|Smurfs|Charlie Brown",
+  "from a film, not a series":"Woody|Buzz Lightyear|Barbie|Sonic|Shrek"},
+ tech:{
+  "you can hold it":"drone|VR headset|solar panel|3D printer|smartwatch|battery|keyboard|server|fast charger",
+  "security":"password manager|two-factor auth|antivirus|face unlock|incognito mode|ad blocker",
+  "when something breaks":"data loss|blue screen|spam|dead phone battery|restarting the router|software update",
+  "you see it on the screen":"emoji|screenshot|dark mode|pixel|heat map",
+  "connection or network":"wifi|bluetooth|broadband|QR code|voicemail",
+  "software or a concept":"cryptocurrency|the cloud|chatbot|voice recognition|cloud backup|open source|algorithm"},
+ holiday:{
+  "happens in winter":"New Year's Eve|advent calendar|Santa Claus|Christmas tree|Christmas dinner|carnival|costume party",
+  "school-related":"graduation|prom|freshman ball|sports day|class reunion",
+  "a family occasion":"wedding|christening|baby shower|anniversary|retirement party|housewarming|birthday|name day",
+  "a public holiday or big date":"Easter|Halloween|May Day|Thanksgiving|Fourth of July|Mother's Day|Valentine's Day|harvest festival|fireworks|Black Friday"},
+ history:{
+  "scientist or thinker":"Einstein|Marie Curie|Galileo|Nikola Tesla|Darwin|Freud|Newton|Socrates",
+  "artist":"Leonardo da Vinci|Mozart|Beethoven|Shakespeare|Van Gogh|Michelangelo",
+  "ruler":"Cleopatra|Julius Caesar|Alexander the Great|Tutankhamun|Nefertiti|Queen Victoria|Genghis Khan|Attila the Hun",
+  "leader or politician":"Napoleon|Gandhi|JFK|Churchill|Abraham Lincoln|Martin Luther King",
+  "explorer or one of a kind":"Columbus|Marco Polo|Amelia Earhart|Neil Armstrong|Joan of Arc|Rosa Parks|Houdini"}
+}};
+
+/* ================= SZÖVEGEK / UI STRINGS ================= */
+const T = {
+hu:{
+ logo:'Ki a <span>kém</span>?', tagline:'Szavas partijáték · egy telefon',
+ players:'Játékosok', playerRange:'3–15 fő',
+ useNames:'Nevek megadása', useNamesD:'Enélkül „1. játékos”, „2. játékos”…',
+ spies:'Kémek száma', spiesOne:n=>'A többi '+n+' fő a szót kapja',
+ spiesMany:(a,b)=>a+' kém, '+b+' civil',
+ cats:'Témakörök · mind ingyenes', selAll:'Mind', selNone:'Egyik sem',
+ catNote:'A nyom módban csak azok a témák jelennek meg, amikhez van nyom.',
+ spyGets:'Mit tud a kém?',
+ h_none:'semmi', h_cat:'téma', h_letters:'betűk', h_clue:'nyom', h_decoy:'álszó',
+ hn_none:'Csak annyit lát: te vagy a kém. Kegyetlen mód.',
+ hn_cat:'Látja a témakört, de a szót nem. Ez az alap.',
+ hn_letters:'Témakör + hány betűs a szó és mi a kezdőbetűje.',
+ hn_clue:'Témakör + egy tág kifejezés, ami arrafelé mutat. Nem lövi le a szót, de van mibe kapaszkodni.',
+ hn_decoy:'Kap egy másik szót ugyanabból a témából. Blöffölni könnyű, lebukni is.',
+ timerT:'Beszélgetés hossza', timerD:'Visszaszámláló a kör alatt', tOff:'nincs',
+ deal:'Osztás', passTiny:'Add körbe a telefont · senki ne lessen',
+ needCat:'Válassz legalább egy témakört.', needWords:'Adj nevet és legalább 4 szót.',
+ passTo:n=>'Add oda: '+n,
+ yourWord:'A te szavad', yourRole:'A te szereped', youAreSpy:'TE VAGY A KÉM',
+ theme:t=>'Téma: '+t, thumb:'Tartsd rajta az ujjad',
+ holdHint:'Nyomd meg és tartsd, amíg olvasod', letGo:'Engedd el, aztán nyomj Tovább-ot',
+ next:'Tovább',
+ round:n=>'Kör '+n, roundH:'Mondjatok egy-egy szót',
+ roundTheme:t=>'Téma: '+t+'. Mindenki mond egy szót, ami a titkos szóhoz kapcsolódik — de ne túl konkrétat.',
+ roundThemeNo:'Mindenki mond egy szót, ami a titkos szóhoz kapcsolódik — de ne túl konkrétat.',
+ starts:'Kezdi', team:'Csapat', spiesK:'Kémek',
+ start:'Indítás', pause:'Szünet', resume:'Folytatás', again:'Újra',
+ vote:'Szavazás', voteEyebrow:'Szavazás', voteH:'Ki a kém?',
+ voteSub:'Számoljatok háromig, mutassatok rá valakire, aztán nyomjátok meg a nevét.',
+ skipVote:'Kihagyás — csak mutasd a szót',
+ resultEyebrow:'Eredmény', caught:'Elkaptátok!', caughtB:n=>n+' tényleg kém volt.',
+ wrong:'Rossz tipp', wrongB:n=>n+' ártatlan volt. A kém megúszta.',
+ noVote:'Kör vége', noVoteB:'Nem volt szavazás, nincs pont.',
+ secretWord:'A titkos szó', spyWas:m=>'A kém'+(m?'ek':'')+':',
+ flip:'A kém mégis kitalálta a szót', flipped:'Pont a kémnek ✓',
+ newRound:'Új kör', settings:'Beállítások',
+ letters:(w,l,f)=> (w>1? w+' szó · ':'') + l+' betű · kezdőbetű: '+f,
+ decoy:d=>'Álszó: '+d, decoyNote:'(nem ez a titkos szó)',
+ clue:c=>'Nyom: '+c
+},
+en:{
+ logo:"Who's the <span>spy</span>?", tagline:'Word party game · one phone',
+ players:'Players', playerRange:'3–15 people',
+ useNames:'Use names', useNamesD:'Otherwise “Player 1”, “Player 2”…',
+ spies:'Number of spies', spiesOne:n=>'The other '+n+' get the word',
+ spiesMany:(a,b)=>a+' spies, '+b+' civilians',
+ cats:'Categories · all free', selAll:'All', selNone:'None',
+ catNote:'In clue mode only the categories that have clues are shown.',
+ spyGets:'What the spy gets',
+ h_none:'nothing', h_cat:'theme', h_letters:'letters', h_clue:'clue', h_decoy:'decoy',
+ hn_none:'All they see is: you are the spy. Brutal mode.',
+ hn_cat:'They see the category but not the word. The default.',
+ hn_letters:'Category plus the word length and its first letter.',
+ hn_clue:'Category plus a broad phrase pointing that way. It never gives the word away, but it is something to hold on to.',
+ hn_decoy:'They get a different word from the same category. Easy to bluff, easy to slip.',
+ timerT:'Round timer', timerD:'Counts down while you talk', tOff:'off',
+ deal:'Deal', passTiny:'Pass the phone · no peeking',
+ needCat:'Pick at least one category.', needWords:'Add a name and at least 4 words.',
+ passTo:n=>'Pass to: '+n,
+ yourWord:'Your word', yourRole:'Your role', youAreSpy:'YOU ARE THE SPY',
+ theme:t=>'Theme: '+t, thumb:'Keep your finger down',
+ holdHint:'Press and hold to read it', letGo:'Let go, then tap Next',
+ next:'Next',
+ round:n=>'Round '+n, roundH:'One word each',
+ roundTheme:t=>'Theme: '+t+'. Everyone says one word linked to the secret word — but not too obvious.',
+ roundThemeNo:'Everyone says one word linked to the secret word — but not too obvious.',
+ starts:'Starts', team:'Team', spiesK:'Spies',
+ start:'Start', pause:'Pause', resume:'Resume', again:'Again',
+ vote:'Vote', voteEyebrow:'Vote', voteH:'Who is the spy?',
+ voteSub:'Count to three, point at someone, then tap their name.',
+ skipVote:'Skip — just show the word',
+ resultEyebrow:'Result', caught:'You got them!', caughtB:n=>n+' really was the spy.',
+ wrong:'Wrong call', wrongB:n=>n+' was innocent. The spy got away.',
+ noVote:'Round over', noVoteB:'No vote, no points.',
+ secretWord:'The secret word', spyWas:m=>'The spy'+(m?'ies':'')+':',
+ flip:'The spy guessed the word anyway', flipped:'Point to the spy ✓',
+ newRound:'New round', settings:'Settings',
+ letters:(w,l,f)=> (w>1? w+' words · ':'') + l+' letters · starts with '+f,
+ decoy:d=>'Decoy: '+d, decoyNote:'(this is not the secret word)',
+ clue:c=>'Clue: '+c
+}};
+
+/* ================= ÁLLAPOT ================= */
+const S = {
+  lang:'hu', players:5, imposters:1, useNames:false, names:[],
+  cats:["food","animal","movie","huartist"], hintLevel:'cat', timeSet:180,
+  round:0, team:0, imp:0,
+  word:"", catName:"", decoy:"", clue:"", impIdx:[], dealIdx:0, starter:0, pointGiven:null
+};
+const $ = id => document.getElementById(id);
+const t = () => T[S.lang];
+
+function packName(p){ return p.n[S.lang]; }
+function packWords(p){
+  const s = p.w[S.lang];
+  return s ? s.split('|').map(x=>x.trim()).filter(x=>x && !x.endsWith('?')) : null;
+}
+function availPacks(){ return PACKS.filter(p=>{ const w=packWords(p); return w && w.length>3; }); }
+
+/* --- nyomok --- */
+let CLUEMAP = {};
+function buildClueMap(){
+  CLUEMAP = {};
+  const src = CLUES[S.lang] || {};
+  for(const pid in src){
+    const m = {};
+    for(const tag in src[pid]) src[pid][tag].split('|').forEach(w=>{ m[w.trim()] = tag; });
+    CLUEMAP[pid] = m;
+  }
+}
+function hasClues(p){
+  const m = CLUEMAP[p.id]; if(!m) return false;
+  const w = packWords(p);
+  return w.filter(x=>m[x]).length >= w.length*0.9;
+}
+/* a nyom módban csak a nyommal ellátott témák játszhatók */
+function usablePacks(){
+  const a = availPacks();
+  return S.hintLevel==='clue' ? a.filter(hasClues) : a;
+}
+function nameOf(i){ return (S.useNames && S.names[i] && S.names[i].trim()) ? S.names[i].trim() : (S.lang==='hu' ? (i+1)+'. játékos' : 'Player '+(i+1)); }
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); $(id).classList.add('on'); window.scrollTo(0,0); }
+
+/* --- mentés --- */
+function payload(){
+  return JSON.stringify({
+    lang:S.lang, players:S.players, imposters:S.imposters, useNames:S.useNames, names:S.names,
+    cats:S.cats, hintLevel:S.hintLevel, timeSet:S.timeSet });
+}
+async function save(){
+  try{
+    if(window.storage) await window.storage.set('kem:v2', payload());
+    else localStorage.setItem('kem:v2', payload());
+  }catch(e){}
+}
+async function load(){
+  try{
+    if(window.storage){ const r = await window.storage.get('kem:v2'); if(r && r.value) Object.assign(S, JSON.parse(r.value)); }
+    else { const v = localStorage.getItem('kem:v2'); if(v) Object.assign(S, JSON.parse(v)); }
+  }catch(e){}
+}
+
+/* ================= NYELV ================= */
+function applyLang(){
+  document.documentElement.lang = S.lang;
+  const L = t();
+  document.querySelectorAll('[data-i]').forEach(el=>{
+    const v = L[el.dataset.i]; if(typeof v === 'string') el.textContent = v;
+  });
+  $('logo').innerHTML = L.logo;
+  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.l===S.lang)));
+  buildClueMap();
+  $('btnStart').textContent = L.deal;
+  $('btnNext').textContent = L.next;
+  $('btnVote').textContent = L.vote;
+  $('btnSkipVote').textContent = L.skipVote;
+  $('btnAgain').textContent = L.newRound;
+  $('btnHome').textContent = L.settings;
+  $('btnFlip').textContent = L.flip;
+  $('cardThumb').textContent = L.thumb;
+  document.querySelectorAll('#segHint button').forEach(b=> b.textContent = L['h_'+b.dataset.h]);
+  document.querySelector('#segTime button[data-t="0"]').textContent = L.tOff;
+  // a másik nyelven nem létező témák (pl. Budapest) kiesnek
+  const ok = availPacks().map(p=>p.id);
+  S.cats = S.cats.filter(c=>ok.includes(c));
+  if(!S.cats.length) S.cats = ok.slice(0,4);
+  // ha nyom módban egy sincs kiválasztva, adjunk párat
+  if(S.hintLevel==='clue' && !usablePacks().some(p=>S.cats.includes(p.id)))
+    S.cats = S.cats.concat(usablePacks().slice(0,4).map(p=>p.id));
+}
+
+document.querySelectorAll('.lang button').forEach(b=>
+  b.onclick = ()=>{ S.lang=b.dataset.l; applyLang(); renderSetup(); save(); });
+
+/* ================= BEÁLLÍTÁSOK ================= */
+function maxImp(){ return Math.max(1, Math.floor((S.players-1)/2)); }
+
+function renderSetup(){
+  const L = t();
+  $('pVal').textContent = S.players;
+  $('pMinus').disabled = S.players<=3;
+  $('pPlus').disabled = S.players>=15;
+  if(S.imposters>maxImp()) S.imposters = maxImp();
+  $('iVal').textContent = S.imposters;
+  $('iMinus').disabled = S.imposters<=1;
+  $('iPlus').disabled = S.imposters>=maxImp();
+  $('iHint').textContent = S.imposters===1 ? L.spiesOne(S.players-1) : L.spiesMany(S.imposters, S.players-S.imposters);
+  $('swNames').setAttribute('aria-pressed', S.useNames);
+  $('nameBox').style.display = S.useNames ? 'grid' : 'none';
+  if(S.useNames) renderNames();
+  document.querySelectorAll('#segHint button').forEach(b=> b.setAttribute('aria-pressed', String(b.dataset.h===S.hintLevel)));
+  $('hintNote').textContent = L['hn_'+S.hintLevel];
+  document.querySelectorAll('#segTime button').forEach(b=> b.setAttribute('aria-pressed', String(+b.dataset.t===S.timeSet)));
+  renderChips();
+}
+
+function renderNames(){
+  const box=$('nameBox'); box.innerHTML='';
+  for(let i=0;i<S.players;i++){
+    const inp=document.createElement('input');
+    inp.type='text'; inp.placeholder=(i+1)+'.'; inp.value=S.names[i]||''; inp.maxLength=14;
+    inp.oninput=e=>{ S.names[i]=e.target.value; save(); };
+    box.appendChild(inp);
+  }
+}
+
+function renderChips(){
+  const L=t(), box=$('catChips'); box.innerHTML='';
+  const packs = usablePacks();
+  const on = () => packs.filter(p=>S.cats.includes(p.id)).length;
+  $('btnAll').textContent = (on()===packs.length) ? L.selNone : L.selAll;
+  packs.forEach(p=>{
+    const b=document.createElement('button');
+    b.className='chip'; b.textContent=packName(p);
+    b.setAttribute('aria-pressed', S.cats.includes(p.id));
+    b.onclick=()=>{ const i=S.cats.indexOf(p.id); if(i>=0) S.cats.splice(i,1); else S.cats.push(p.id);
+      b.setAttribute('aria-pressed', S.cats.includes(p.id)); $('setupErr').textContent='';
+      $('btnAll').textContent = (on()===packs.length)? L.selNone : L.selAll; save(); };
+    box.appendChild(b);
+  });
+  $('catNote').textContent = (S.hintLevel==='clue') ? L.catNote : '';
+}
+
+$('btnAll').onclick = ()=>{
+  const packs=usablePacks(), ids=packs.map(p=>p.id);
+  const allOn = ids.every(id=>S.cats.includes(id));
+  S.cats = allOn ? S.cats.filter(c=>!ids.includes(c)) : S.cats.concat(ids.filter(id=>!S.cats.includes(id)));
+  renderChips(); save();
+};
+$('pMinus').onclick=()=>{S.players--;renderSetup();save()};
+$('pPlus').onclick =()=>{S.players++;renderSetup();save()};
+$('iMinus').onclick=()=>{S.imposters--;renderSetup();save()};
+$('iPlus').onclick =()=>{S.imposters++;renderSetup();save()};
+$('swNames').onclick=()=>{S.useNames=!S.useNames;renderSetup();save()};
+document.querySelectorAll('#segHint button').forEach(b=> b.onclick=()=>{
+  S.hintLevel=b.dataset.h;
+  if(S.hintLevel==='clue' && !usablePacks().some(p=>S.cats.includes(p.id)))
+    S.cats = S.cats.concat(usablePacks().slice(0,4).map(p=>p.id));
+  renderSetup(); save();
+});
+document.querySelectorAll('#segTime button').forEach(b=> b.onclick=()=>{S.timeSet=+b.dataset.t;renderSetup();save()});
+
+/* ================= OSZTÁS ================= */
+$('btnStart').onclick = ()=>{
+  const pool = usablePacks().filter(p=>S.cats.includes(p.id));
+  if(!pool.length){ $('setupErr').textContent=t().needCat; return; }
+  $('setupErr').textContent=''; S.round=0; S.team=0; S.imp=0; newRound();
+};
+
+/* egy témán belül csak akkor ismétlődik szó, ha már mind sorra került */
+const used = new Set();
+function newRound(){
+  const pool = usablePacks().filter(p=>S.cats.includes(p.id));
+  const pack = pool[Math.floor(Math.random()*pool.length)];
+  const words = packWords(pack);
+  const key = w => S.lang+'|'+pack.id+'|'+w;
+  let fresh = words.filter(w=>!used.has(key(w)));
+  if(!fresh.length){ words.forEach(w=>used.delete(key(w))); fresh = words; }
+  S.word = fresh[Math.floor(Math.random()*fresh.length)];
+  used.add(key(S.word));
+  S.catName = packName(pack);
+  const others = words.filter(x=>x!==S.word);
+  S.decoy = others.length ? others[Math.floor(Math.random()*others.length)] : S.word;
+  S.clue = (CLUEMAP[pack.id] && CLUEMAP[pack.id][S.word]) || '';
+
+  const idx=[...Array(S.players).keys()];
+  for(let i=idx.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+  S.impIdx = idx.slice(0,S.imposters);
+  S.starter = Math.floor(Math.random()*S.players);
+  S.dealIdx = 0; S.round++; S.pointGiven=null;
+  stopTimer(); renderDeal(); show('s-deal');
+}
+
+const card=$('card'); let seen=false, pending=null, clearTid=null;
+
+function spyTip(){
+  const L=t();
+  if(S.hintLevel==='letters'){
+    const words=S.word.trim().split(/\s+/).length;
+    const letters=S.word.replace(/[\s'’-]/g,'').length;
+    return L.letters(words, letters, S.word.trim().charAt(0).toUpperCase());
+  }
+  if(S.hintLevel==='clue') return S.clue ? L.clue(S.clue) : '';
+  if(S.hintLevel==='decoy') return L.decoy(S.decoy.toUpperCase())+'\n'+L.decoyNote;
+  return '';
+}
+
+/* A kártya zárt állapotban MINDENKINEK ugyanaz: se szín, se szöveg nem árul el
+   semmit, a tartalom csak nyomva tartás közben kerül bele. */
+function clearFront(){
+  $('cardRole').textContent=''; $('cardWord').textContent='';
+  $('cardCat').textContent='';  $('cardTip').textContent='';
+  card.classList.remove('spy');
+}
+
+function renderDeal(){
+  const L=t(); seen=false;
+  clearTimeout(clearTid);
+  card.classList.remove('open');
+  clearFront();
+  $('btnNext').disabled=true;
+  $('dealCount').textContent=(S.dealIdx+1)+' / '+S.players;
+  $('dealWho').textContent=L.passTo(nameOf(S.dealIdx));
+  $('dealHint').textContent=L.holdHint;
+  pending = S.impIdx.includes(S.dealIdx)
+    ? { spy:true,  role:L.yourRole, word:L.youAreSpy,
+        cat:(S.hintLevel==='none') ? '' : L.theme(S.catName), tip:spyTip() }
+    : { spy:false, role:L.yourWord, word:S.word, cat:S.catName, tip:'' };
+}
+
+function openCard(){
+  if(!pending) return;
+  clearTimeout(clearTid);
+  $('cardRole').textContent=pending.role;
+  $('cardWord').textContent=pending.word;
+  $('cardCat').textContent=pending.cat;
+  $('cardTip').textContent=pending.tip;
+  card.classList.toggle('spy', pending.spy);
+  card.classList.add('open');
+  if(!seen){ seen=true; $('btnNext').disabled=false; $('dealHint').textContent=t().letGo; }
+}
+function closeCard(){
+  if(!card.classList.contains('open')) return;
+  card.classList.remove('open');
+  clearTimeout(clearTid);
+  clearTid = setTimeout(()=>{ if(!card.classList.contains('open')) clearFront(); }, 170);
+}
+card.addEventListener('pointerdown',e=>{e.preventDefault();card.setPointerCapture(e.pointerId);openCard()});
+card.addEventListener('pointerup',closeCard);
+card.addEventListener('pointercancel',closeCard);
+card.addEventListener('pointerleave',closeCard);
+card.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();openCard()}});
+card.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter'){closeCard()}});
+card.addEventListener('contextmenu',e=>e.preventDefault());
+$('btnNext').onclick=()=>{ S.dealIdx++; if(S.dealIdx>=S.players) startRound(); else renderDeal(); };
+
+/* ================= KÖR ================= */
+let tId=null, tLeft=0, tRunning=false;
+const fmt = s => Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+
+function startRound(){
+  const L=t();
+  $('roundNo').textContent=L.round(S.round);
+  $('starterName').textContent=nameOf(S.starter);
+  $('roundTheme').textContent = (S.hintLevel==='none') ? L.roundThemeNo : L.roundTheme(S.catName);
+  updScore();
+  tLeft=S.timeSet; tRunning=false;
+  $('timer').textContent = S.timeSet? fmt(tLeft) : '—';
+  $('timer').classList.remove('low');
+  $('btnTimer').style.display = S.timeSet? 'block':'none';
+  $('btnTimer').textContent = L.start;
+  show('s-round');
+}
+function stopTimer(){ if(tId){clearInterval(tId);tId=null;} tRunning=false; }
+$('btnTimer').onclick=()=>{
+  const L=t();
+  if(tRunning){ stopTimer(); $('btnTimer').textContent=L.resume; return; }
+  if(tLeft<=0) tLeft=S.timeSet;
+  tRunning=true; $('btnTimer').textContent=L.pause;
+  tId=setInterval(()=>{
+    tLeft--; $('timer').textContent=fmt(Math.max(0,tLeft));
+    $('timer').classList.toggle('low', tLeft<=15);
+    if(tLeft<=0){ stopTimer(); $('btnTimer').textContent=L.again; beep(); }
+  },1000);
+};
+function beep(){
+  try{ const a=new (window.AudioContext||window.webkitAudioContext)();
+    const o=a.createOscillator(), g=a.createGain();
+    o.connect(g); g.connect(a.destination); o.frequency.value=660; o.type='square';
+    g.gain.setValueAtTime(.12,a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.5);
+    o.start(); o.stop(a.currentTime+.5);
+  }catch(e){}
+}
+function updScore(){
+  $('scoreTeam').textContent=S.team; $('scoreImp').textContent=S.imp;
+  $('scoreTeam2').textContent=S.team; $('scoreImp2').textContent=S.imp;
+}
+
+/* ================= SZAVAZÁS ================= */
+$('btnVote').onclick=()=>{
+  stopTimer();
+  const l=$('voteList'); l.innerHTML='';
+  for(let i=0;i<S.players;i++){
+    const b=document.createElement('button'); b.textContent=nameOf(i); b.onclick=()=>result(i); l.appendChild(b);
+  }
+  show('s-vote');
+};
+$('btnSkipVote').onclick=()=>result(null);
+
+function result(ejected){
+  const L=t(), v=$('verdict');
+  const caught = ejected!==null && S.impIdx.includes(ejected);
+  if(ejected===null){
+    v.className='verdict good'; v.querySelector('.h').textContent=L.noVote;
+    v.querySelector('.b').textContent=L.noVoteB; S.pointGiven=null;
+  }else if(caught){
+    v.className='verdict good'; v.querySelector('.h').textContent=L.caught;
+    v.querySelector('.b').textContent=L.caughtB(nameOf(ejected)); S.team++; S.pointGiven='team';
+  }else{
+    v.className='verdict bad'; v.querySelector('.h').textContent=L.wrong;
+    v.querySelector('.b').textContent=L.wrongB(nameOf(ejected)); S.imp++; S.pointGiven='imp';
+  }
+  $('revWord').textContent=S.word;
+  const imps=$('revImps'), who=document.createElement('b'), th=document.createElement('span');
+  who.textContent=S.impIdx.map(nameOf).join(', ');
+  th.style.cssText='color:#8695BE;font-size:13px'; th.textContent=L.theme(S.catName);
+  imps.replaceChildren(L.spyWas(S.imposters>1)+' ', who, document.createElement('br'), th);
+  $('btnFlip').style.display=(S.pointGiven==='team')?'block':'none';
+  $('btnFlip').textContent=L.flip; $('btnFlip').disabled=false;
+  updScore(); show('s-result');
+}
+$('btnFlip').onclick=()=>{
+  if(S.pointGiven==='team'){ S.team--; S.imp++; S.pointGiven='imp';
+    $('btnFlip').textContent=t().flipped; $('btnFlip').disabled=true; updScore(); }
+};
+$('btnAgain').onclick=()=>newRound();
+$('btnHome').onclick=()=>{ stopTimer(); renderSetup(); show('s-setup'); };
+
+/* ================= INDÍTÁS ================= */
+load().then(()=>{ applyLang(); renderSetup(); });
+
+/* offline mód */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+</script>
+</body>
+</html>
